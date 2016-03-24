@@ -31,12 +31,12 @@ int main() {
 		if ( gameState == MENU ) {
 			draw_load( "Loading" );
 			switch ( game_mainMenu( &whoPlayer ) ) {
-				case NET_SETUP:
-					changeGameState( NET_SETUP );
-					break;
-				case END_GAME:
-					changeGameState( END_GAME );
-					break;
+			case NET_SETUP:
+				changeGameState( NET_SETUP );
+				break;
+			case END_GAME:
+				changeGameState( END_GAME );
+				break;
 			}
 		} else if ( gameState == NET_SETUP ) {
 			net_setup( whoPlayer );

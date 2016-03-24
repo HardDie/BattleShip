@@ -8,40 +8,40 @@ char              ip[16] = "";
  * Description: Инициализируются все настройки для сетевой игры
  * */
 void net_setup( const char typeConnection ) {
-  echo();
+	echo();
 
-  if ( typeConnection == NET_CLIENT ) {           // Настройка клиента
-    draw_netClientIPEnter();
-    draw_help( "Enter server IP addres(255.255.255.255)" );
+	if ( typeConnection == NET_CLIENT ) {           // Настройка клиента
+		draw_netClientIPEnter();
+		draw_help( "Enter server IP addres(255.255.255.255)" );
 
-    WINDOW *input = NULL; // Создаем окно для ввода
-    input = subwin( stdscr, 1, 16, 1, 1 );  // Инициализируем его
-    wgetstr( input, ip ); // Считываем IP
-    while ( net_checkIP() ) {
-      draw_netClientIPEnter();
-      draw_help( "Wrong input, try again. Enter server IP addres(255.255.255.255)" );
-      wgetstr( input, ip ); // Считываем IP
-    }
-    delwin( input );
+		WINDOW *input = NULL; // Создаем окно для ввода
+		input = subwin( stdscr, 1, 16, 1, 1 );  // Инициализируем его
+		wgetstr( input, ip ); // Считываем IP
+		while ( net_checkIP() ) {
+			draw_netClientIPEnter();
+			draw_help( "Wrong input, try again. Enter server IP addres(255.255.255.255)" );
+			wgetstr( input, ip ); // Считываем IP
+		}
+		delwin( input );
 
-    draw_netClientPortEnter( ip );
-    draw_help( "Input port(1000-10000)" );
-    while ( ( !scanw( "%d", &port ) ) || port < 1000 || port > 10000 ) {   // Считываем порт
-      draw_netClientPortEnter( ip );
-      draw_help( "Wrong input, try again. Input port(1000-10000)" );
-    }
-  } else if ( typeConnection == NET_SERVER ) {      // Настройка сервера
-    draw_netServerPortEnter();
-    draw_help( "Input port(1000-10000)" );
-    while ( ( !scanw( "%d", &port ) ) || port < 1000 || port > 10000 ) {   // Считываем порт
-      draw_netServerPortEnter();
-      draw_help( "Wrong input, try again. Input port(1000-10000)" );
-    }
-  } else {
-    draw_ERROR( "net_setup", "Wrong variables typeConnection" );
-  }
+		draw_netClientPortEnter( ip );
+		draw_help( "Input port(1000-10000)" );
+		while ( ( !scanw( "%d", &port ) ) || port < 1000 || port > 10000 ) {   // Считываем порт
+			draw_netClientPortEnter( ip );
+			draw_help( "Wrong input, try again. Input port(1000-10000)" );
+		}
+	} else if ( typeConnection == NET_SERVER ) {      // Настройка сервера
+		draw_netServerPortEnter();
+		draw_help( "Input port(1000-10000)" );
+		while ( ( !scanw( "%d", &port ) ) || port < 1000 || port > 10000 ) {   // Считываем порт
+			draw_netServerPortEnter();
+			draw_help( "Wrong input, try again. Input port(1000-10000)" );
+		}
+	} else {
+		draw_ERROR( "net_setup", "Wrong variables typeConnection" );
+	}
 
-  noecho();
+	noecho();
 }
 
 /*
@@ -50,47 +50,47 @@ void net_setup( const char typeConnection ) {
  * */
 char net_checkIP() {
 
-  if ( strlen( ip ) > 15 || strlen( ip ) < 7 ) {  // Проверка на длину IP адреса
-    return 1;
-  }
+	if ( strlen( ip ) > 15 || strlen( ip ) < 7 ) {  // Проверка на длину IP адреса
+		return 1;
+	}
 
-  char dotCount = 0;
-  for ( int i = 0; i < strlen( ip ); i++ ) {
-    if ( ip[i] == '.' ) { // Проверка но количество точек
-      dotCount++;
-    }
-    if ( ip[i] < 46 || ip[i] > 57 || ip[i] == 47 ) {  // Проверка на символ цифры
-      return 1;
-    }
-  }
-  if ( dotCount != 3 ) {
-    return 1;
-  }
+	char dotCount = 0;
+	for ( int i = 0; i < strlen( ip ); i++ ) {
+		if ( ip[i] == '.' ) { // Проверка но количество точек
+			dotCount++;
+		}
+		if ( ip[i] < 46 || ip[i] > 57 || ip[i] == 47 ) {  // Проверка на символ цифры
+			return 1;
+		}
+	}
+	if ( dotCount != 3 ) {
+		return 1;
+	}
 
-  for ( int i = strlen( ip ) - 1, val = 0, mn = 1; i >= -1; i-- ) {
+	for ( int i = strlen( ip ) - 1, val = 0, mn = 1; i >= -1; i-- ) {
 
-    if ( i == -1 || ip[i] == '.' ) {  // Проверка на превышения интервала
-      if ( val > 255 ) {
-        return 1;
-      }
-      val = 0;
-      mn = 1;
-    } else {
-      val += mn * ( ip[i] - 48 );
-      mn *= 10;
-    }
+		if ( i == -1 || ip[i] == '.' ) {  // Проверка на превышения интервала
+			if ( val > 255 ) {
+				return 1;
+			}
+			val = 0;
+			mn = 1;
+		} else {
+			val += mn * ( ip[i] - 48 );
+			mn *= 10;
+		}
 
-    if ( ( i != 0 ) && ( i != strlen( ip ) - 1 ) ) {  // Не учитываем в проверке первый и последний символ
-      if ( ip[i] == '0' && ip[ i - 1 ] == '.' && ip[ i + 1 ] != '.' ) { // Если 0 в значении стоит первым, и после него нету точки, то это неверно
-        return 1;
-      }
-    } else if ( i == 0 && ip[i] == '0' && ip[ i + 1 ] != '.' ) {
-      return 1;
-    }
+		if ( ( i != 0 ) && ( i != strlen( ip ) - 1 ) ) {  // Не учитываем в проверке первый и последний символ
+			if ( ip[i] == '0' && ip[i - 1] == '.' && ip[i + 1] != '.' ) { // Если 0 в значении стоит первым, и после него нету точки, то это неверно
+				return 1;
+			}
+		} else if ( i == 0 && ip[i] == '0' && ip[i + 1] != '.' ) {
+			return 1;
+		}
 
-  }
+	}
 
-  return 0;
+	return 0;
 }
 
 /*
@@ -98,14 +98,14 @@ char net_checkIP() {
  * Desription: Происходит создание сокета
  * */
 void net_createSocket( const char typeConnection ) {
-  struct sockaddr_in  server_addr;
+	struct sockaddr_in  server_addr;
 	int                 true = 1;
 
 	if ( ( sock = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ) {
 		draw_ERROR( "net_createSocket", "Create socket" );
 	}
 
-	if ( setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, &true, sizeof(int) ) == -1 ) {
+	if ( setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, &true, sizeof( int ) ) == -1 ) {
 		close( sock );
 		draw_ERROR( "net_createSocket", "Setsockopt" );
 	}

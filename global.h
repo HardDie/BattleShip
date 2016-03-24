@@ -16,17 +16,17 @@ extern 				WINDOW 		*		winSecPlayer;
 extern				WINDOW		*		winHelp;
 extern 				char					gameState;	// Состояние игры
 
-							enum	{
-											MENU = 0,
-											NET_SETUP,
-											SETUP_SHIP,
-											SHOOT,
-											END_GAME
-										};
+					enum	{
+								MENU = 0,
+								NET_SETUP,
+								SETUP_SHIP,
+								SHOOT,
+								END_GAME
+							};
 
-							enum  {
-							        NET_SERVER = 1,
-							        NET_CLIENT
-							      };
+					enum	{
+								NET_SERVER = 1,
+								NET_CLIENT
+							};
 
 #endif
