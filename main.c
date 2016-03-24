@@ -29,7 +29,6 @@ int main() {
 	//============================
 	while ( !gameIsDone ) {
 		if ( gameState == MENU ) {
-			draw_load( "Loading" );
 			switch ( game_mainMenu( &whoPlayer ) ) {
 			case NET_SETUP:
 				changeGameState( NET_SETUP );
