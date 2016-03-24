@@ -100,7 +100,14 @@ char net_checkIP() {
  * Desription: Происходит создание сокета
  * */
 void net_createSocket( const char typeConnection ) {
+	int pid;
+	pid = fork();
+	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
+		draw_load( "Create socket" );
+	}
+
 	if ( ( sock = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ) {		// Создаем сокет
+		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 		draw_ERROR( "net_createSocket", "Create socket" );
 	}
 
@@ -113,6 +120,7 @@ void net_createSocket( const char typeConnection ) {
 
 		if ( setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, &val_true, sizeof( int ) ) == -1 ) {
 			close( sock );
+			kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 			draw_ERROR( "net_createSocket", "Server. Setsockopt" );
 		}
 
@@ -120,10 +128,12 @@ void net_createSocket( const char typeConnection ) {
 
 		if ( bind( sock, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
 			close( sock );
+			kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 			draw_ERROR( "net_createSocket", "Server. Unable to bind" );
 		}
 		if ( listen( sock, 1 ) == -1 ) {
 			close( sock );
+			kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 			draw_ERROR( "net_createSocket", "Server. Listen" );
 		}
 	} else if ( typeConnection == NET_CLIENT ) {
@@ -132,4 +142,5 @@ void net_createSocket( const char typeConnection ) {
 
 		server_addr.sin_addr = *( ( struct in_addr * )host->h_addr_list[0] );
 	}
+	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 }
