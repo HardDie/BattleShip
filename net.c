@@ -1,7 +1,9 @@
 #include "net.h"
 
-unsigned short    port;
-char              ip[16] = "";
+unsigned short    	port;
+char              	ip[16] = "";
+int					sock, connected;
+struct sockaddr_in 	server_addr;
 
 /*
  * Name: net_setup
@@ -98,29 +100,36 @@ char net_checkIP() {
  * Desription: Происходит создание сокета
  * */
 void net_createSocket( const char typeConnection ) {
-	struct sockaddr_in  server_addr;
-	int                 true = 1;
-
-	if ( ( sock = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ) {
+	if ( ( sock = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ) {		// Создаем сокет
 		draw_ERROR( "net_createSocket", "Create socket" );
 	}
 
-	if ( setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, &true, sizeof( int ) ) == -1 ) {
-		close( sock );
-		draw_ERROR( "net_createSocket", "Setsockopt" );
-	}
-
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons( 5000 );
-	server_addr.sin_addr.s_addr = INADDR_ANY;
+	server_addr.sin_family = AF_INET;		// Инициализация параметров
+	server_addr.sin_port = htons( port );
 	bzero( &( server_addr.sin_zero ), 8 );
 
-	if ( bind( sock, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
-		close( sock );
-		draw_ERROR( "net_createSocket", "Unable to bind" );
-	}
-	if ( listen( sock, 1 ) == -1 ) {
-		close( sock );
-		draw_ERROR( "net_createSocket", "Listen" );
+	if ( typeConnection == NET_SERVER ) {
+		int val_true = 1;
+
+		if ( setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, &val_true, sizeof( int ) ) == -1 ) {
+			close( sock );
+			draw_ERROR( "net_createSocket", "Server. Setsockopt" );
+		}
+
+		server_addr.sin_addr.s_addr = INADDR_ANY;
+
+		if ( bind( sock, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
+			close( sock );
+			draw_ERROR( "net_createSocket", "Server. Unable to bind" );
+		}
+		if ( listen( sock, 1 ) == -1 ) {
+			close( sock );
+			draw_ERROR( "net_createSocket", "Server. Listen" );
+		}
+	} else if ( typeConnection == NET_CLIENT ) {
+		struct hostent *host;
+		host = gethostbyname( ip );
+
+		server_addr.sin_addr = *( ( struct in_addr * )host->h_addr_list[0] );
 	}
 }
