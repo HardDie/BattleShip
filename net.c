@@ -141,6 +141,37 @@ void net_createSocket( const char typeConnection ) {
 		host = gethostbyname( ip );
 
 		server_addr.sin_addr = *( ( struct in_addr * )host->h_addr_list[0] );
+	} else {
+		close( sock );
+		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+		draw_ERROR( "net_createSocket", "Wrong variables typeConnection" );
 	}
 	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+}
+
+/*
+ * Name: net_connectOpponent
+ * Description: Подключение к оппоненту
+ * */
+void net_connectOpponent( const char typeConnection ) {
+	if ( typeConnection == NET_SERVER ) {
+		int pid;
+		pid = fork();
+		if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
+			draw_load( "Wait opponent" );
+		}
+
+		struct sockaddr_in 	client_addr;
+		int 				sin_size;
+		sin_size = sizeof( struct sockaddr_in );
+		connected = accept( sock, ( struct sockaddr * )&client_addr, &sin_size );
+
+		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+	} else if ( typeConnection == NET_CLIENT ) {
+		if ( connect( sock, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
+			draw_ERROR( "net_connectOpponent", "Connect to server" );
+		}
+	} else {
+		draw_ERROR( "net_connectOpponent", "Wrong variables typeConnection" );
+	}
 }

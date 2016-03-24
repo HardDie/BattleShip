@@ -40,6 +40,7 @@ int main() {
 		} else if ( gameState == NET_SETUP ) {
 			net_setup( whoPlayer );
 			net_createSocket( whoPlayer );
+			net_connectOpponent( whoPlayer );
 			changeGameState( SETUP_SHIP );
 		} else if ( gameState == SETUP_SHIP ) {
 			draw_labels();
