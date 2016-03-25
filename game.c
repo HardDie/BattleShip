@@ -14,9 +14,9 @@ void game_initVariables() {
 
 /*
  * Name: game_doStep
- * Description: Выбор клетки для стрельбы и отрисовка курсора выбора хода, возвращается координата выстрела старшие 4 бита координата X младшие Y
+ * Description: Выбор клетки для стрельбы и отрисовка курсора выбора хода, передается координата выстрела старшие 4 бита координата X младшие Y
  * */
-char game_doStep() {
+void game_doStep() {
 	char isDone = 0, reDraw = 1;
 	while ( !isDone ) {
 		if ( reDraw ) {
@@ -56,27 +56,27 @@ char game_doStep() {
 			break;
 		case 10:	// Enter
 			isDone = 1;
-			if ( b_field[( int ) y_coor][( int ) x_coor] == kTile_ship ) {
-				b_field[( int ) y_coor][( int ) x_coor] = kTile_bitShip;
-			} else {
-				b_field[( int ) y_coor][( int ) x_coor] = kTile_miss;
+			char result[1];	// Переменная для возврата значения
+			result[0] = 0;
+			for ( char i = 0; i < 4; i++ ) {
+				if ( y_coor & 1 << i ) {	// В 4 младших бита записываем координату y
+					result[0] |= 1 << i;
+				}
+				if ( x_coor & 1 << i ) {	// В 4 старших бита записываем координату x
+					result[0] |= 1 << ( i + 4 );
+				}
 			}
-
+			net_sendMessage( result, 1 );
+			net_recvMessage( result, 1 );
+			if ( result[0] == SHOOT_BIT ) {
+				b_field[ ( int )y_coor ][ ( int )x_coor ] = kTile_bitShip;
+			} else if ( result[0] == SHOOT_MISS ) {
+				b_field[ ( int )y_coor ][ ( int )x_coor ] = kTile_miss;
+			}
 			reDraw = 1;
 			break;
 		}
 	}
-	draw_battleField();
-	char result = 0;	// Переменная для возврата значения
-	for ( char i = 0; i < 4; i++ ) {
-		if ( y_coor & 1 << i ) {	// В 4 младших бита записываем координату y
-			result |= 1 << i;
-		}
-		if ( ( x_coor / 2 ) & 1 << i ) {	// В 4 старших бита записываем координату x
-			result |= 1 << ( i + 4 );
-		}
-	}
-	return result;
 }
 
 /*
@@ -295,6 +295,7 @@ char game_initGame( const char typeConnection ) {
 	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
 		draw_load( "Wait ready enemy" );
 	}
+
 	char first[1];
 
 	if ( typeConnection == NET_SETUP ) {
@@ -303,13 +304,69 @@ char game_initGame( const char typeConnection ) {
 		net_sendMessage( first, 1 );
 		net_recvMessage( first, 1 );
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+		pid = fork();
+		if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
+			if ( first[0] == 0 ) {
+				draw_load( "Your step first" );
+			} else {
+				draw_load( "Your step second" );
+			}
+		}
 	} else if ( typeConnection == NET_CLIENT ) {
 		net_recvMessage( first, 1 );
 		net_sendMessage( first, 1 );
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+		pid = fork();
+		if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
+			if ( first[0] == 1 ) {
+				draw_load( "Your step first" );
+			} else {
+				draw_load( "Your step second" );
+			}
+		}
 	} else {
 		draw_ERROR( "game_initGame", "Wrong variables typeConnection" );
 	}
+	sleep( 3 );
+	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 
 	return first[0];
+}
+
+/*
+ * Name: game_waitStep
+ * Description: Ожидает хода противника и сообщает о промахе, попадании либо убийстве коробля
+ * */
+void game_waitStep() {
+	int pid;
+	pid = fork();
+	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
+		draw_load( "Wait while enemy shoot" );
+	}
+
+	char shootCoord[1];
+	char x = 0, y = 0;
+	net_recvMessage( shootCoord, 1 );	// Прием координаты выстрела противника
+
+	for ( int i = 0, mn = 1; i < 4; i++, mn *= 2 ) {	// Вывод координат выстрела
+		if ( shootCoord[0] & 1 << i ) {
+			y += mn;
+		}
+		if ( shootCoord[0] & 1 << ( i + 4 ) ) {
+			x += mn;
+		}
+	}
+
+	char answer[1];
+	if ( a_field[ ( int )y ][ ( int )x ] == kTile_background ) {		// Определяем попал или нет противник и отвечаем ему
+		answer[0] = SHOOT_MISS;
+		a_field[ ( int )y ][ ( int )x ] = kTile_miss;
+	} else if ( a_field[ ( int )y ][ ( int )x ] == kTile_ship ) {
+		answer[0] = SHOOT_BIT;
+		a_field[ ( int )y ][ ( int )x ] = kTile_bitShip;
+	}
+
+	net_sendMessage( answer, 1 );
+
+	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 }

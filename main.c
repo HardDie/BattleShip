@@ -49,15 +49,17 @@ int main() {
 			changeGameState( WAIT_ENEMY );
 		} else if ( gameState == WAIT_ENEMY ) {
 			whoFirst = game_initGame( whoPlayer );
-			if ( ( whoPlayer == NET_SERVER && whoFirst == 0 ) || ( whoPlayer == NET_CLIENT && whoFirst == 1 ) ) {
+			if ( ( whoPlayer == NET_SERVER && whoFirst == 0 ) || ( whoPlayer == NET_CLIENT && whoFirst == 1 ) ) {	// Если 0 первым ходит сервер, при 1 первым ходит клиент
 				changeGameState( SHOOT );
 			} else {
 				changeGameState( WAIT_STEP );
 			}
 		} else if ( gameState == SHOOT ) {
 			game_doStep();
+			changeGameState( WAIT_STEP );
 		} else if ( gameState == WAIT_STEP ) {
-
+			game_waitStep();
+			changeGameState( SHOOT );
 		} else if ( gameState == END_GAME ) {
 			gameIsDone = 1;
 		}
