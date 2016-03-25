@@ -52,6 +52,11 @@ void net_setup( const char typeConnection ) {
  * */
 char net_checkIP() {
 
+	if ( strcmp( ip, "localhost" ) == 0 ) {
+		strcpy ( ip, "127.0.0.1" );
+		return 0;
+	}
+
 	if ( strlen( ip ) > 15 || strlen( ip ) < 7 ) {  // Проверка на длину IP адреса
 		return 1;
 	}
