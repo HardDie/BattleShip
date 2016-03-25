@@ -38,13 +38,16 @@ int main() {
 				break;
 			}
 		} else if ( gameState == NET_SETUP ) {
-			net_setup( whoPlayer );
+			//net_setup( whoPlayer );
 			net_createSocket( whoPlayer );
 			net_connectOpponent( whoPlayer );
 			changeGameState( SETUP_SHIP );
 		} else if ( gameState == SETUP_SHIP ) {
 			draw_labels();
 			game_setUpShips();
+			changeGameState( WAIT_ENEMY );
+		} else if ( gameState == WAIT_ENEMY ) {
+			game_initGame( whoPlayer );
 			changeGameState( SHOOT );
 		} else if ( gameState == SHOOT ) {
 			game_doStep();
@@ -114,7 +117,10 @@ void changeGameState( const char newState ) {
 		draw_help( "Leave SHOOT state!" );
 	} else if ( gameState == END_GAME ) {
 		draw_help( "Leave END_GAME state!" );
-	} /*else if ( gameState ==  ) {
+	} else if ( gameState == WAIT_ENEMY ) {
+		draw_help( "Leave WAIT_ENEMY state!" );
+	}
+	/*else if ( gameState ==  ) {
 
 	}*/
 	//getch();
@@ -131,6 +137,8 @@ void changeGameState( const char newState ) {
 		draw_help( "Set SHOOT state!" );
 	} else if ( gameState == END_GAME ) {
 		draw_help( "Set END_GAME state!" );
+	} else if ( gameState == WAIT_ENEMY ) {
+		draw_help( "Set WAIT_ENEMY state!" );
 	}
 	//getch();
 }
