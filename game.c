@@ -116,7 +116,6 @@ void game_setUpShips() {
 			draw_battleField();
 			draw_shipSetUp( width, pos );
 			draw_help( "Setup your ships, use ARROWS or WASD, TAB and ENTER" );
-			mvprintw( 17, 0, "x:%d y:%d\nShip num:%d pos:%d\nwidth: %d", x_coor, y_coor, shipNum, pos, width );
 			reDraw = 0;
 		}
 		switch ( getch() ) {	// Передвижение курсора с кораблем
@@ -284,4 +283,33 @@ char game_mainMenu( char* whoPlayer ) {
 			break;
 		}
 	}
+}
+
+/*
+ * Name: game_initGame
+ * Description: Сервер инициализирует кто будет первый ходить и ждет пока противника, а клиент просто ждет противника, результатом функция возвращает кто ходит первый
+ * */
+char game_initGame( const char typeConnection ) {
+	int pid;
+	pid = fork();
+	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
+		draw_load( "Wait ready enemy" );
+	}
+	char first[1];
+
+	if ( typeConnection == NET_SETUP ) {
+		srand( time( NULL ) );
+		first[0] = rand() % 2;
+		net_sendMessage( first, 1 );
+		net_recvMessage( first, 1 );
+		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+	} else if ( typeConnection == NET_CLIENT ) {
+		net_recvMessage( first, 1 );
+		net_sendMessage( first, 1 );
+		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+	} else {
+		draw_ERROR( "game_initGame", "Wrong variables typeConnection" );
+	}
+
+	return first[0];
 }
