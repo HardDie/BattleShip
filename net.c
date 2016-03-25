@@ -2,7 +2,7 @@
 
 unsigned short    	port;
 char              	ip[16] = "";
-int					sock, connected;
+int					sock_server, sock_enemy;
 struct sockaddr_in 	server_addr;
 
 /*
@@ -110,11 +110,6 @@ void net_createSocket( const char typeConnection ) {
 		draw_load( "Create socket" );
 	}
 
-	if ( ( sock = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ) {		// Создаем сокет
-		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
-		draw_ERROR( "net_createSocket", "Create socket" );
-	}
-
 	server_addr.sin_family = AF_INET;		// Инициализация параметров
 	server_addr.sin_port = htons( port );
 	bzero( &( server_addr.sin_zero ), 8 );
@@ -122,21 +117,26 @@ void net_createSocket( const char typeConnection ) {
 	if ( typeConnection == NET_SERVER ) {
 		int val_true = 1;
 
-		if ( setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, &val_true, sizeof( int ) ) == -1 ) {
-			close( sock );
+		if ( ( sock_server = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ) {		// Создаем сокет
+			kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+			draw_ERROR( "net_createSocket", "Server create socket" );
+		}
+
+		if ( setsockopt( sock_server, SOL_SOCKET, SO_REUSEADDR, &val_true, sizeof( int ) ) == -1 ) {
+			close( sock_server );
 			kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 			draw_ERROR( "net_createSocket", "Server. Setsockopt" );
 		}
 
 		server_addr.sin_addr.s_addr = INADDR_ANY;
 
-		if ( bind( sock, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
-			close( sock );
+		if ( bind( sock_server, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
+			close( sock_server );
 			kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 			draw_ERROR( "net_createSocket", "Server. Unable to bind" );
 		}
-		if ( listen( sock, 1 ) == -1 ) {
-			close( sock );
+		if ( listen( sock_server, 1 ) == -1 ) {
+			close( sock_server );
 			kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 			draw_ERROR( "net_createSocket", "Server. Listen" );
 		}
@@ -144,9 +144,13 @@ void net_createSocket( const char typeConnection ) {
 		struct hostent *host;
 		host = gethostbyname( ip );
 
+		if ( ( sock_enemy = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ) {		// Создаем сокет
+			kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+			draw_ERROR( "net_createSocket", "Client create socket" );
+		}
+
 		server_addr.sin_addr = *( ( struct in_addr * )host->h_addr_list[0] );
 	} else {
-		close( sock );
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 		draw_ERROR( "net_createSocket", "Wrong variables typeConnection" );
 	}
@@ -168,14 +172,30 @@ void net_connectOpponent( const char typeConnection ) {
 		struct sockaddr_in 	client_addr;
 		int 				sin_size;
 		sin_size = sizeof( struct sockaddr_in );
-		connected = accept( sock, ( struct sockaddr * )&client_addr, &sin_size );
+		sock_enemy = accept( sock_server, ( struct sockaddr * )&client_addr, &sin_size );
 
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 	} else if ( typeConnection == NET_CLIENT ) {
-		if ( connect( sock, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
+		if ( connect( sock_enemy, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
 			draw_ERROR( "net_connectOpponent", "Connect to server" );
 		}
 	} else {
 		draw_ERROR( "net_connectOpponent", "Wrong variables typeConnection" );
 	}
+}
+
+/*
+ * Name: net_sendMessage
+ * Description: Отправляет пакет данных оппоненту
+ * */
+void net_sendMessage( const char* pointer, const size_t sizeMsg ) {
+	send( sock_enemy, pointer, sizeMsg, 0 );
+}
+
+/*
+ * Name: net_recvMessage
+ * Description: Принимает пакет данных от оппонента, результат приема записывается в указатель
+ * */
+void net_recvMessage( char* pointer, const size_t sizeMsg ) {
+	recv( sock_enemy, pointer, sizeMsg, 0 );
 }
