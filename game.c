@@ -22,28 +22,32 @@ char game_doStep() {
 		if ( reDraw ) {
 			draw_battleField();
 			draw_cursorForShoot();
-			draw_help( "Please choose coordinate for shoot, and press Enter" );
+			draw_help( "Please choose coordinate for shoot use ARROWS or WASD, and press Enter" );
 			reDraw = 0;
 		}
 		switch ( getch() ) {	// Перемещение курсора
+		case 119:	// W
 		case KEY_UP:
 			if ( y_coor > 0 ) {
 				y_coor--;
 				reDraw = 1;
 			}
 			break;
+		case 115:	// S
 		case KEY_DOWN:
 			if ( y_coor < 9 ) {
 				y_coor++;
 				reDraw = 1;
 			}
 			break;
+		case 97:	// A
 		case KEY_LEFT:
 			if ( x_coor > 0 ) {
 				x_coor--;
 				reDraw = 1;
 			}
 			break;
+		case 100:	// D
 		case KEY_RIGHT:
 			if ( x_coor < 9 ) {
 				x_coor++;
@@ -111,11 +115,12 @@ void game_setUpShips() {
 		if ( reDraw ) {	// Отрисовка
 			draw_battleField();
 			draw_shipSetUp( width, pos );
-			draw_help( "Setup your ships, use ARROWS, TAB and ENTER" );
+			draw_help( "Setup your ships, use ARROWS or WASD, TAB and ENTER" );
 			mvprintw( 17, 0, "x:%d y:%d\nShip num:%d pos:%d\nwidth: %d", x_coor, y_coor, shipNum, pos, width );
 			reDraw = 0;
 		}
 		switch ( getch() ) {	// Передвижение курсора с кораблем
+		case 115:	// S
 		case KEY_DOWN:
 			if ( pos == 0 ) {
 				if ( y_coor < 9 ) {
@@ -129,12 +134,14 @@ void game_setUpShips() {
 				}
 			}
 			break;
+		case 119:	// W
 		case KEY_UP:
 			if ( y_coor > 0 ) {
 				y_coor--;
 				reDraw = 1;
 			}
 			break;
+		case 100:	// D
 		case KEY_RIGHT:
 			if ( pos == 0 ) {
 				if ( x_coor + width < 10 ) {
@@ -148,6 +155,7 @@ void game_setUpShips() {
 				}
 			}
 			break;
+		case 97:	// A
 		case KEY_LEFT:
 			if ( x_coor > 0 ) {
 				x_coor--;
