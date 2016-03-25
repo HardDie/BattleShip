@@ -20,6 +20,7 @@ extern 				char					gameState;	// Состояние игры
 								MENU = 0,
 								NET_SETUP,
 								SETUP_SHIP,
+								WAIT_ENEMY,
 								SHOOT,
 								END_GAME
 							};
