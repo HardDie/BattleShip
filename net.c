@@ -104,6 +104,8 @@ char net_checkIP() {
  * Desription: Происходит создание сокета
  * */
 void net_createSocket( const char typeConnection ) {
+	port = 1211;
+	strcpy( ip, "localhost" );
 	int pid;
 	pid = fork();
 	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
