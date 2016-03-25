@@ -5,7 +5,6 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
-#include <signal.h>
 #include "global.h"
 #include "draw.h"
 #include "net.h"

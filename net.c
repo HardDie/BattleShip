@@ -106,11 +106,7 @@ char net_checkIP() {
 void net_createSocket( const char typeConnection ) {
 	port = 1211;
 	strcpy( ip, "localhost" );
-	int pid;
-	pid = fork();
-	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
-		draw_load( "Create socket" );
-	}
+	int pid = draw_load( "Create socket" );
 
 	server_addr.sin_family = AF_INET;		// Инициализация параметров
 	server_addr.sin_port = htons( port );
@@ -165,11 +161,7 @@ void net_createSocket( const char typeConnection ) {
  * */
 void net_connectOpponent( const char typeConnection ) {
 	if ( typeConnection == NET_SERVER ) {
-		int pid;
-		pid = fork();
-		if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
-			draw_load( "Wait opponent" );
-		}
+		int pid = draw_load( "Wait opponent" );
 
 		struct sockaddr_in 	client_addr;
 		int 				sin_size;
@@ -178,9 +170,11 @@ void net_connectOpponent( const char typeConnection ) {
 
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 	} else if ( typeConnection == NET_CLIENT ) {
+		int pid = draw_load( "Wait opponent" );
 		if ( connect( sock_enemy, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
 			draw_ERROR( "net_connectOpponent", "Connect to server" );
 		}
+		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 	} else {
 		draw_ERROR( "net_connectOpponent", "Wrong variables typeConnection" );
 	}

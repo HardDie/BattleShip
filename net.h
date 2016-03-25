@@ -8,7 +8,6 @@
 #include <strings.h>
 #include <netdb.h>
 #include <ncurses.h>
-#include <signal.h>
 #include "draw.h"
 
 void    net_setup( const char typeConnection );

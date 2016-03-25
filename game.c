@@ -290,11 +290,7 @@ char game_mainMenu( char* whoPlayer ) {
  * Description: Сервер инициализирует кто будет первый ходить и ждет пока противника, а клиент просто ждет противника, результатом функция возвращает кто ходит первый
  * */
 char game_initGame( const char typeConnection ) {
-	int pid;
-	pid = fork();
-	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
-		draw_load( "Wait ready enemy" );
-	}
+	int pid = draw_load( "Wait ready enemy" );
 
 	char first[1];
 
@@ -304,25 +300,19 @@ char game_initGame( const char typeConnection ) {
 		net_sendMessage( first, 1 );
 		net_recvMessage( first, 1 );
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
-		pid = fork();
-		if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
-			if ( first[0] == 0 ) {
-				draw_load( "Your step first" );
-			} else {
-				draw_load( "Your step second" );
-			}
+		if ( first[0] == 0 ) {
+			pid = draw_load( "Your step first" );
+		} else {
+			pid = draw_load( "Your step second" );
 		}
 	} else if ( typeConnection == NET_CLIENT ) {
 		net_recvMessage( first, 1 );
 		net_sendMessage( first, 1 );
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
-		pid = fork();
-		if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
-			if ( first[0] == 1 ) {
-				draw_load( "Your step first" );
-			} else {
-				draw_load( "Your step second" );
-			}
+		if ( first[0] == 1 ) {
+			pid = draw_load( "Your step first" );
+		} else {
+			pid = draw_load( "Your step second" );
 		}
 	} else {
 		draw_ERROR( "game_initGame", "Wrong variables typeConnection" );
@@ -338,11 +328,7 @@ char game_initGame( const char typeConnection ) {
  * Description: Ожидает хода противника и сообщает о промахе, попадании либо убийстве коробля
  * */
 void game_waitStep() {
-	int pid;
-	pid = fork();
-	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
-		draw_load( "Wait while enemy shoot" );
-	}
+	int pid = draw_load( "Wait while enemy shoot" );
 
 	char shootCoord[1];
 	char x = 0, y = 0;
