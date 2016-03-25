@@ -16,6 +16,7 @@ int main() {
 	//============================
 	char gameIsDone = 0;
 	char whoPlayer;	// Server or Client
+	char whoFirst;
 
 	//============================
 	//	Setup
@@ -47,10 +48,16 @@ int main() {
 			game_setUpShips();
 			changeGameState( WAIT_ENEMY );
 		} else if ( gameState == WAIT_ENEMY ) {
-			game_initGame( whoPlayer );
-			changeGameState( SHOOT );
+			whoFirst = game_initGame( whoPlayer );
+			if ( ( whoPlayer == NET_SERVER && whoFirst == 0 ) || ( whoPlayer == NET_CLIENT && whoFirst == 1 ) ) {
+				changeGameState( SHOOT );
+			} else {
+				changeGameState( WAIT_STEP );
+			}
 		} else if ( gameState == SHOOT ) {
 			game_doStep();
+		} else if ( gameState == WAIT_STEP ) {
+
 		} else if ( gameState == END_GAME ) {
 			gameIsDone = 1;
 		}
@@ -119,6 +126,8 @@ void changeGameState( const char newState ) {
 		draw_help( "Leave END_GAME state!" );
 	} else if ( gameState == WAIT_ENEMY ) {
 		draw_help( "Leave WAIT_ENEMY state!" );
+	} else if ( gameState == WAIT_STEP ) {
+		draw_help( "Leave WAIT_STEP state!" );
 	}
 	/*else if ( gameState ==  ) {
 
@@ -139,6 +148,8 @@ void changeGameState( const char newState ) {
 		draw_help( "Set END_GAME state!" );
 	} else if ( gameState == WAIT_ENEMY ) {
 		draw_help( "Set WAIT_ENEMY state!" );
+	} else if ( gameState == WAIT_STEP ) {
+		draw_help( "Set WAIT_STEP state!" );
 	}
 	//getch();
 }

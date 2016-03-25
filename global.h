@@ -21,6 +21,7 @@ extern 				char					gameState;	// Состояние игры
 								NET_SETUP,
 								SETUP_SHIP,
 								WAIT_ENEMY,
+								WAIT_STEP,
 								SHOOT,
 								END_GAME
 							};
