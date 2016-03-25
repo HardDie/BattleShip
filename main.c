@@ -30,6 +30,7 @@ int main() {
 	//============================
 	while ( !gameIsDone ) {
 		if ( gameState == MENU ) {
+
 			switch ( game_mainMenu( &whoPlayer ) ) {
 			case NET_SETUP:
 				changeGameState( NET_SETUP );
@@ -38,30 +39,43 @@ int main() {
 				changeGameState( END_GAME );
 				break;
 			}
+			
 		} else if ( gameState == NET_SETUP ) {
+
 			//net_setup( whoPlayer );
 			net_createSocket( whoPlayer );
 			net_connectOpponent( whoPlayer );
 			changeGameState( SETUP_SHIP );
+
 		} else if ( gameState == SETUP_SHIP ) {
+
 			draw_labels();
 			game_setUpShips();
 			changeGameState( WAIT_ENEMY );
+
 		} else if ( gameState == WAIT_ENEMY ) {
+
 			whoFirst = game_initGame( whoPlayer );
 			if ( ( whoPlayer == NET_SERVER && whoFirst == 0 ) || ( whoPlayer == NET_CLIENT && whoFirst == 1 ) ) {	// Если 0 первым ходит сервер, при 1 первым ходит клиент
 				changeGameState( SHOOT );
 			} else {
 				changeGameState( WAIT_STEP );
 			}
+
 		} else if ( gameState == SHOOT ) {
+
 			game_doStep();
 			changeGameState( WAIT_STEP );
+
 		} else if ( gameState == WAIT_STEP ) {
+
 			game_waitStep();
 			changeGameState( SHOOT );
+
 		} else if ( gameState == END_GAME ) {
+
 			gameIsDone = 1;
+
 		}
 	}
 
