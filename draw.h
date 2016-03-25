@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
 #include "global.h"
 
 void	draw_labels();
@@ -17,6 +18,6 @@ void	draw_netClientIPEnter();
 void	draw_netClientPortEnter( const char* ip );
 void	draw_ERROR( const char* funcName, const char* typeError );
 void	draw_help( const char* helpText );
-void	draw_load( const char* loadText );
+int		draw_load( const char* loadText );
 
 #endif

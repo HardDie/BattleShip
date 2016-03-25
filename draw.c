@@ -180,22 +180,26 @@ void  draw_help( const char* helpText ) {
 
 /*
  * Name: draw_load
- * Description: Отрисовывает текст для загрузки
+ * Description: Отрисовывает текст для загрузки, возвращает pid дочернего процесса
  * */
-void draw_load( const char* loadText ) {
-	int row, col, dot;
-	getmaxyx( stdscr, row, col );
-	dot = 1;
-	while ( 1 ) {
-		clear();
-		mvprintw( row / 2, col / 2 - strlen( loadText ) / 2, "%s", loadText );
-		for ( int i = 0; i < dot; i++ ) {
-			addch( '.' );
+int draw_load( const char* loadText ) {
+	int pid = fork();
+	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
+		int row, col, dot;
+		getmaxyx( stdscr, row, col );
+		dot = 1;
+		while ( 1 ) {
+			clear();
+			mvprintw( row / 2, col / 2 - strlen( loadText ) / 2, "%s", loadText );
+			for ( int i = 0; i < dot; i++ ) {
+				addch( '.' );
+			}
+			if ( ++dot > 5 ) {
+				dot = 1;
+			}
+			refresh();
+			sleep( 1 );
 		}
-		if ( ++dot > 5 ) {
-			dot = 1;
-		}
-		refresh();
-		sleep( 1 );
 	}
+	return pid;
 }
