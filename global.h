@@ -31,4 +31,10 @@ extern 				char					gameState;	// Состояние игры
 								NET_CLIENT
 							};
 
+					enum	{
+								SHOOT_MISS,
+								SHOOT_BIT,
+								SHOOT_KILL
+							};
+
 #endif
