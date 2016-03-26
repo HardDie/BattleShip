@@ -19,5 +19,6 @@ void	draw_netClientPortEnter( const char* ip );
 void	draw_ERROR( const char* funcName, const char* typeError );
 void	draw_help( const char* helpText );
 int		draw_loadFullScreen( const char* loadText );
+int		draw_loadText( const char* loadText );
 
 #endif

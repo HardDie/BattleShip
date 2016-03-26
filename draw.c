@@ -180,7 +180,7 @@ void  draw_help( const char* helpText ) {
 
 /*
  * Name: draw_loadFullScreen
- * Description: Отрисовывает текст для загрузки, возвращает pid дочернего процесса
+ * Description: Отрисовывает текст для загрузки очищая экран, возвращает pid дочернего процесса
  * */
 int draw_loadFullScreen( const char* loadText ) {
 	int pid = fork();
@@ -193,6 +193,36 @@ int draw_loadFullScreen( const char* loadText ) {
 			mvprintw( row / 2, col / 2 - strlen( loadText ) / 2, "%s", loadText );
 			for ( int i = 0; i < dot; i++ ) {
 				addch( '.' );
+			}
+			if ( ++dot > 5 ) {
+				dot = 1;
+			}
+			refresh();
+			sleep( 1 );
+		}
+	}
+	return pid;
+}
+
+/*
+ * Name: draw_loadText
+ * Description: Отрисовывает текст для загрузки не очищая экран, возвращает pid дочернего процесса
+ * */
+int draw_loadText( const char* loadText ) {
+	int pid = fork();
+	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
+		int row, col, dot;
+		getmaxyx( stdscr, row, col );
+		dot = 1;
+		while ( 1 ) {
+			mvprintw( row / 2 + 1, col / 2 - strlen( loadText ) / 2, "%s", loadText );
+			for ( int i = 0; i < 5; i++ ) {
+				if ( i < dot ) {
+					addch( '.' );
+				} else {
+					addch( ' ' );
+				}
+
 			}
 			if ( ++dot > 5 ) {
 				dot = 1;
