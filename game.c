@@ -77,6 +77,7 @@ void game_doStep() {
 			break;
 		}
 	}
+	draw_battleField();
 }
 
 /*
@@ -328,7 +329,7 @@ char game_initGame( const char typeConnection ) {
  * Description: Ожидает хода противника и сообщает о промахе, попадании либо убийстве коробля
  * */
 void game_waitStep() {
-	int pid = draw_loadFullScreen( "Wait while enemy shoot" );
+	int pid = draw_loadText( "Wait while enemy shoot" );
 
 	char shootCoord[1];
 	char x = 0, y = 0;
