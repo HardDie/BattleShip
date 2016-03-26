@@ -17,5 +17,6 @@ char	game_checkDotForSet( const char x, const char y );
 char	game_mainMenu( char* whoPlayer );
 char	game_initGame( const char typeConnection );
 void	game_waitStep();
+char	game_checkShoot( const char shootCoord[] );
 
 #endif

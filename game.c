@@ -332,9 +332,21 @@ void game_waitStep() {
 	int pid = draw_loadText( "Wait while enemy shoot" );
 
 	char shootCoord[1];
-	char x = 0, y = 0;
-	net_recvMessage( shootCoord, 1 );	// Прием координаты выстрела противника
 
+	net_recvMessage( shootCoord, 1 );	// Прием координаты выстрела противника
+	char answer[1];
+	answer[0] = game_checkShoot( shootCoord );
+	net_sendMessage( answer, 1 );
+
+	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+}
+
+/*
+ * Name: game_checkShoot
+ * Description: Проверяет выстрел оппонента, и возвращает промах, попал или убил
+ * */
+char game_checkShoot( const char shootCoord[] ) {
+	int x = 0, y = 0;
 	for ( int i = 0, mn = 1; i < 4; i++, mn *= 2 ) {	// Вывод координат выстрела
 		if ( shootCoord[0] & 1 << i ) {
 			y += mn;
@@ -344,16 +356,12 @@ void game_waitStep() {
 		}
 	}
 
-	char answer[1];
-	if ( a_field[ ( int )y ][ ( int )x ] == kTile_background ) {		// Определяем попал или нет противник и отвечаем ему
-		answer[0] = SHOOT_MISS;
-		a_field[ ( int )y ][ ( int )x ] = kTile_miss;
-	} else if ( a_field[ ( int )y ][ ( int )x ] == kTile_ship ) {
-		answer[0] = SHOOT_BIT;
-		a_field[ ( int )y ][ ( int )x ] = kTile_bitShip;
+	if ( a_field[y][x] == kTile_background ) {		// Определяем попал или нет противник и отвечаем ему
+		a_field[y][x] = kTile_miss;
+		return SHOOT_MISS;
+	} else if ( a_field[y][x] == kTile_ship ) {
+		a_field[y][x] = kTile_bitShip;
+		return SHOOT_BIT;
 	}
-
-	net_sendMessage( answer, 1 );
-
-	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+	return SHOOT_MISS;
 }
