@@ -18,6 +18,6 @@ void	draw_netClientIPEnter();
 void	draw_netClientPortEnter( const char* ip );
 void	draw_ERROR( const char* funcName, const char* typeError );
 void	draw_help( const char* helpText );
-int		draw_load( const char* loadText );
+int		draw_loadFullScreen( const char* loadText );
 
 #endif

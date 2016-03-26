@@ -179,10 +179,10 @@ void  draw_help( const char* helpText ) {
 }
 
 /*
- * Name: draw_load
+ * Name: draw_loadFullScreen
  * Description: Отрисовывает текст для загрузки, возвращает pid дочернего процесса
  * */
-int draw_load( const char* loadText ) {
+int draw_loadFullScreen( const char* loadText ) {
 	int pid = fork();
 	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
 		int row, col, dot;
