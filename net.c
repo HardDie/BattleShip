@@ -38,7 +38,7 @@ void net_setup( const char typeConnection ) {
 			draw_help( "Wrong input, try again. Input port(1000-10000)" );
 		}
 	} else {
-		draw_ERROR( "net_setup", "Wrong variables typeConnection" );
+		draw_ERROR( "net_setup", "Wrong argument typeConnection" );
 	}
 
 	noecho();	// Отключаем отображение символов
@@ -149,7 +149,7 @@ void net_createSocket( const char typeConnection ) {
 		server_addr.sin_addr = *( ( struct in_addr * )host->h_addr_list[0] );
 	} else {
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
-		draw_ERROR( "net_createSocket", "Wrong variables typeConnection" );
+		draw_ERROR( "net_createSocket", "Wrong argument typeConnection" );
 	}
 	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 }
@@ -176,7 +176,7 @@ void net_connectOpponent( const char typeConnection ) {
 		}
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 	} else {
-		draw_ERROR( "net_connectOpponent", "Wrong variables typeConnection" );
+		draw_ERROR( "net_connectOpponent", "Wrong argument typeConnection" );
 	}
 }
 

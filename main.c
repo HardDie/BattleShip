@@ -76,6 +76,10 @@ int main() {
 
 			gameIsDone = 1;
 
+		} else {
+
+			draw_ERROR( "main", "Wrong argument gameState" );
+
 		}
 	}
 
@@ -144,6 +148,8 @@ void changeGameState( const char newState ) {
 		draw_help( "Leave WAIT_ENEMY state!" );
 	} else if ( gameState == WAIT_STEP ) {
 		draw_help( "Leave WAIT_STEP state!" );
+	} else {
+		draw_ERROR( "changeGameState", "Wrong argument gameState" );
 	}
 	/*else if ( gameState ==  ) {
 
@@ -166,6 +172,8 @@ void changeGameState( const char newState ) {
 		draw_help( "Set WAIT_ENEMY state!" );
 	} else if ( gameState == WAIT_STEP ) {
 		draw_help( "Set WAIT_STEP state!" );
+	} else {
+		draw_ERROR( "changeGameState", "Wrong argument gameState" );
 	}
 	//getch();
 }

@@ -83,7 +83,7 @@ void draw_shipSetUp( const char width, const char pos ) {
 			waddch( winFstPlayer, kTile_ship );	// Отрисовка коробля
 			wattron( winFstPlayer, COLOR_PAIR( 2 ) );	// Возвращаем цвет
 		}
-	} else {	// Для вертикального
+	} else if ( pos == 1 ) {	// Для вертикального
 		for ( char i = 0; i < width; i++ ) {
 			wmove( winFstPlayer, y_coor + i, x_coor * 2 );
 			if ( a_field[( int ) y_coor + i][( int ) x_coor] == kTile_ship ) {	// Если точка совпала уже с существующим кораблем выводит красным цветом
@@ -92,6 +92,8 @@ void draw_shipSetUp( const char width, const char pos ) {
 			waddch( winFstPlayer, kTile_ship );	// Отрисовка коробля
 			wattron( winFstPlayer, COLOR_PAIR( 2 ) );	// Возвращаем цвет
 		}
+	} else {
+		draw_ERROR( "draw_shipSetUp", "Wrong argument pos" );
 	}
 	wattron( winFstPlayer, COLOR_PAIR( 1 ) );	// Возвращаем исходные цвета
 	wrefresh( winFstPlayer );
@@ -131,7 +133,6 @@ void  draw_netClientIPEnter() {
 	clear();
 	printw( "CLIENT Setup\n" );
 	printw( ">" );
-	//printw( "Enter server IP addres(255.255.255.255): " );
 	refresh();
 }
 
@@ -143,7 +144,6 @@ void  draw_netClientPortEnter( const char* ip ) {
 	clear();
 	printw( "CLIENT Setup\n" );
 	printw( "IP: %s\n", ip );
-	//printw( "Input port(1000-10000): " );
 	printw( ">" );
 	refresh();
 }

@@ -72,6 +72,8 @@ void game_doStep() {
 				b_field[ ( int )y_coor ][ ( int )x_coor ] = kTile_bitShip;
 			} else if ( result[0] == SHOOT_MISS ) {
 				b_field[ ( int )y_coor ][ ( int )x_coor ] = kTile_miss;
+			} else {
+				draw_ERROR( "game_doStep", "Wrong argument b_field[y_coor][x_coor]" );
 			}
 			reDraw = 1;
 			break;
@@ -93,6 +95,7 @@ void game_setUpShips() {
 	char width;	// Ширина коробля
 
 	while ( !isDone ) {
+
 		switch ( shipNum ) {	// Выбор ширины коробля
 		case 1:		// Четырехпалубники
 			width = 4;
@@ -113,12 +116,14 @@ void game_setUpShips() {
 			width = 1;
 			break;
 		}
+
 		if ( reDraw ) {	// Отрисовка
 			draw_battleField();
 			draw_shipSetUp( width, pos );
 			draw_help( "Setup your ships, use ARROWS or WASD, TAB and ENTER" );
 			reDraw = 0;
 		}
+
 		switch ( getch() ) {	// Передвижение курсора с кораблем
 		case 115:	// S
 		case KEY_DOWN:
@@ -127,11 +132,13 @@ void game_setUpShips() {
 					y_coor++;
 					reDraw = 1;
 				}
-			} else {
+			} else if ( pos == 1 ) {
 				if ( y_coor + width < 10 ) {
 					y_coor++;
 					reDraw = 1;
 				}
+			} else {
+				draw_ERROR( "game_setUpShips; case KEY_DOWN", "Wrong argument pos" );
 			}
 			break;
 		case 119:	// W
@@ -148,11 +155,13 @@ void game_setUpShips() {
 					x_coor++;
 					reDraw = 1;
 				}
-			} else {
+			} else if ( pos == 1 ) {
 				if ( x_coor < 9 ) {
 					x_coor++;
 					reDraw = 1;
 				}
+			} else {
+				draw_ERROR( "game_setUpShips; case KEY_RIGHT", "Wrong argument pos" );
 			}
 			break;
 		case 97:	// A
@@ -168,11 +177,13 @@ void game_setUpShips() {
 					pos = 1;
 					reDraw = 1;
 				}
-			} else {
+			} else if ( pos == 1 ) {
 				if ( x_coor + width <= 10 ) {
 					pos = 0;
 					reDraw = 1;
 				}
+			} else {
+				draw_ERROR( "game_setUpShips; case 9", "Wrong argument pos" );
 			}
 			break;
 		case 10:	// Enter
@@ -181,10 +192,12 @@ void game_setUpShips() {
 					for ( char i = 0; i < width; i++ ) {
 						a_field[( int ) y_coor][( int ) x_coor + i] = kTile_ship;
 					}
-				} else {
+				} else if ( pos == 1 ) {
 					for ( char i = 0; i < width; i++ ) {
 						a_field[( int ) y_coor + i][( int ) x_coor] = kTile_ship;
 					}
+				} else {
+					draw_ERROR( "game_setUpShips; case 10", "Wrong argument pos" );
 				}
 				reDraw = 1;
 				shipNum++;	// Переходим к установке следующего коробля
@@ -193,6 +206,7 @@ void game_setUpShips() {
 				}
 			}
 			break;
+
 		}
 	}
 }
@@ -208,12 +222,14 @@ char game_checkShipForSet( const char width, const char pos ) {
 				return 1;
 			}
 		}
-	} else {
+	} else if ( pos == 1 ) {
 		for ( int i = 0; i < width; i++ ) {
 			if ( game_checkDotForSet( x_coor, y_coor + i ) ) {
 				return 1;
 			}
 		}
+	} else {
+		draw_ERROR( "game_checkShipForSet", "Wrong argument pos" );
 	}
 	return 0;
 }
@@ -303,8 +319,10 @@ char game_initGame( const char typeConnection ) {
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 		if ( first[0] == 0 ) {	// Сообщаем о порядке хода
 			pid = draw_loadFullScreen( "Your step first" );
-		} else {
+		} else if ( first[0] == 1 ) {
 			pid = draw_loadFullScreen( "Your step second" );
+		} else {
+			draw_ERROR( "game_initGame", "Wrong argument first[0]" );
 		}
 	} else if ( typeConnection == NET_CLIENT ) {
 		net_recvMessage( first, 1 );	// Принимаем от сервера порядок хода
@@ -312,11 +330,13 @@ char game_initGame( const char typeConnection ) {
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 		if ( first[0] == 1 ) {	// Сообщаем о порядке хода
 			pid = draw_loadFullScreen( "Your step first" );
-		} else {
+		} else if ( first[0] == 0 ) {
 			pid = draw_loadFullScreen( "Your step second" );
+		} else {
+			draw_ERROR( "game_initGame", "Wrong argument first[0]" );
 		}
 	} else {
-		draw_ERROR( "game_initGame", "Wrong variables typeConnection" );
+		draw_ERROR( "game_initGame", "Wrong argument typeConnection" );
 	}
 	sleep( 2 );	// В течении нескольких секунд держим заставку о порядке хода
 	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
@@ -362,6 +382,8 @@ char game_checkShoot( const char shootCoord[] ) {
 	} else if ( a_field[y][x] == kTile_ship ) {
 		a_field[y][x] = kTile_bitShip;
 		return SHOOT_BIT;
+	} else {
+		draw_ERROR( "game_checkShoot", "Wrong argument a_field[y][x]" );
 	}
 	return SHOOT_MISS;
 }
