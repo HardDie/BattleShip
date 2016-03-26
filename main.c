@@ -16,7 +16,7 @@ int main() {
 	//============================
 	char gameIsDone = 0;
 	char whoPlayer;	// Server or Client
-	char whoFirst;
+	char whoFirst;	// Порядок хода
 
 	//============================
 	//	Setup
@@ -39,10 +39,10 @@ int main() {
 				changeGameState( END_GAME );
 				break;
 			}
-			
+
 		} else if ( gameState == NET_SETUP ) {
 
-			//net_setup( whoPlayer );
+			net_setup( whoPlayer );
 			net_createSocket( whoPlayer );
 			net_connectOpponent( whoPlayer );
 			changeGameState( SETUP_SHIP );
@@ -104,9 +104,9 @@ int setUpScreen() {
 	init_pair( 4, COLOR_BLUE, COLOR_BLACK );	// Пара для текста подсказки
 
 	bkgdset( COLOR_PAIR( 1 ) );	// Устанавливаем пару как стандартную
-	wbkgdset( winFstPlayer, COLOR_PAIR( 1 ) );	// Ставим пару цветов для первого ирока
-	wbkgdset( winSecPlayer, COLOR_PAIR( 1 ) );	// Ставим пару цветов для второго игрока
-	wbkgdset( winHelp, COLOR_PAIR( 1 ) );
+	wbkgdset( winFstPlayer, COLOR_PAIR( 1 ) );	// Ставим пару цветов для окна первого ирока
+	wbkgdset( winSecPlayer, COLOR_PAIR( 1 ) );	// Ставим пару цветов для окна второго игрока
+	wbkgdset( winHelp, COLOR_PAIR( 1 ) );	// Ставим пару цветов для окна помощи
 
 
 	noecho();	// Отключаем отображение символов при нажатии в консоли

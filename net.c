@@ -10,7 +10,7 @@ struct sockaddr_in 	server_addr;
  * Description: Инициализируются все настройки для сетевой игры
  * */
 void net_setup( const char typeConnection ) {
-	echo();
+	echo();		// Включаем отображение вводимых символов
 
 	if ( typeConnection == NET_CLIENT ) {           // Настройка клиента
 		draw_netClientIPEnter();
@@ -18,11 +18,9 @@ void net_setup( const char typeConnection ) {
 
 		WINDOW *input = NULL; // Создаем окно для ввода
 		input = subwin( stdscr, 1, 16, 1, 1 );  // Инициализируем его
-		wgetstr( input, ip ); // Считываем IP
-		while ( net_checkIP() ) {
+		while ( wgetstr( input, ip ) || net_checkIP() ) {	// Проверяем IP на правильность ввода
 			draw_netClientIPEnter();
 			draw_help( "Wrong input, try again. Enter server IP addres(255.255.255.255)" );
-			wgetstr( input, ip ); // Считываем IP
 		}
 		delwin( input );
 
@@ -43,7 +41,7 @@ void net_setup( const char typeConnection ) {
 		draw_ERROR( "net_setup", "Wrong variables typeConnection" );
 	}
 
-	noecho();
+	noecho();	// Отключаем отображение символов
 }
 
 /*
@@ -62,10 +60,11 @@ char net_checkIP() {
 
 	char dotCount = 0;
 	for ( int i = 0; i < strlen( ip ); i++ ) {
-		if ( ip[i] == '.' ) { // Проверка но количество точек
+		if ( ip[i] == '.' ) { 	// Проверка но количество точек
 			dotCount++;
+			continue;
 		}
-		if ( ip[i] < 46 || ip[i] > 57 || ip[i] == 47 ) {  // Проверка на символ цифры
+		if ( ip[i] < 48 || ip[i] > 57 ) {  // Проверка на то, является ли символ цифрой
 			return 1;
 		}
 	}
@@ -90,7 +89,7 @@ char net_checkIP() {
 			if ( ip[i] == '0' && ip[i - 1] == '.' && ip[i + 1] != '.' ) { // Если 0 в значении стоит первым, и после него нету точки, то это неверно
 				return 1;
 			}
-		} else if ( i == 0 && ip[i] == '0' && ip[i + 1] != '.' ) {
+		} else if ( i == 0 && ip[i] == '0' && ip[i + 1] != '.' ) {	// Если первый символ в строке 0, и после нее нет точки, ошибка
 			return 1;
 		}
 
@@ -112,7 +111,7 @@ void net_createSocket( const char typeConnection ) {
 	server_addr.sin_port = htons( port );
 	bzero( &( server_addr.sin_zero ), 8 );
 
-	if ( typeConnection == NET_SERVER ) {
+	if ( typeConnection == NET_SERVER ) {	// Создаем сокет для сервера
 		int val_true = 1;
 
 		if ( ( sock_server = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ) {		// Создаем сокет
@@ -138,7 +137,7 @@ void net_createSocket( const char typeConnection ) {
 			kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 			draw_ERROR( "net_createSocket", "Server. Listen" );
 		}
-	} else if ( typeConnection == NET_CLIENT ) {
+	} else if ( typeConnection == NET_CLIENT ) {		// Создаем сокет для клиента
 		struct hostent *host;
 		host = gethostbyname( ip );
 
@@ -172,6 +171,7 @@ void net_connectOpponent( const char typeConnection ) {
 	} else if ( typeConnection == NET_CLIENT ) {
 		int pid = draw_loadFullScreen( "Wait opponent" );
 		if ( connect( sock_enemy, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
+			kill( pid, SIGKILL );
 			draw_ERROR( "net_connectOpponent", "Connect to server" );
 		}
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки

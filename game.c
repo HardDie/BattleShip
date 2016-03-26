@@ -19,7 +19,7 @@ void game_initVariables() {
 void game_doStep() {
 	char isDone = 0, reDraw = 1;
 	while ( !isDone ) {
-		if ( reDraw ) {
+		if ( reDraw ) {		// Отрисовка экрана
 			draw_battleField();
 			draw_cursorForShoot();
 			draw_help( "Please choose coordinate for shoot use ARROWS or WASD, and press Enter" );
@@ -66,8 +66,8 @@ void game_doStep() {
 					result[0] |= 1 << ( i + 4 );
 				}
 			}
-			net_sendMessage( result, 1 );
-			net_recvMessage( result, 1 );
+			net_sendMessage( result, 1 );	// Отправляем противнику координаы выстрела
+			net_recvMessage( result, 1 );	// Принимаем результат, попадание, промах или убийство корабля
 			if ( result[0] == SHOOT_BIT ) {
 				b_field[ ( int )y_coor ][ ( int )x_coor ] = kTile_bitShip;
 			} else if ( result[0] == SHOOT_MISS ) {
@@ -77,7 +77,7 @@ void game_doStep() {
 			break;
 		}
 	}
-	draw_battleField();
+	draw_battleField();	// Отрисовываем игровые поля еще раз, чтобы при ожидании видеть, попал или нет выстрел
 }
 
 /*
@@ -88,7 +88,7 @@ void game_setUpShips() {
 	char isDone = 0, reDraw = 1;
 	char shipNum = 1;
 	char pos = 0;	// Расположение коробля 0 - горизонтально, 1 - вертикально
-	x_coor = 0;
+	x_coor = 0;		// Зануляем курсор
 	y_coor = 0;
 	char width;	// Ширина коробля
 
@@ -176,7 +176,7 @@ void game_setUpShips() {
 			}
 			break;
 		case 10:	// Enter
-			if ( !( game_checkShipForSet( width, pos ) ) ) {
+			if ( !( game_checkShipForSet( width, pos ) ) ) {	// Если функция проверки на возможность установки коробля возвращает 0, то записываем корабля в массив поля
 				if ( pos == 0 ) {
 					for ( char i = 0; i < width; i++ ) {
 						a_field[( int ) y_coor][( int ) x_coor + i] = kTile_ship;
@@ -187,7 +187,7 @@ void game_setUpShips() {
 					}
 				}
 				reDraw = 1;
-				shipNum++;
+				shipNum++;	// Переходим к установке следующего коробля
 				if ( shipNum == 11 ) {
 					isDone = 1;
 				}
@@ -203,7 +203,7 @@ void game_setUpShips() {
  * */
 char game_checkShipForSet( const char width, const char pos ) {
 	if ( pos == 0 ) {
-		for ( int i = 0; i < width; i++ ) {
+		for ( int i = 0; i < width; i++ ) {		// В цикле проверяет каждую точку на возможность ее установки
 			if ( game_checkDotForSet( x_coor + i, y_coor ) ) {
 				return 1;
 			}
@@ -224,18 +224,18 @@ char game_checkShipForSet( const char width, const char pos ) {
  * */
 char game_checkDotForSet( const char x, const char y ) {
 	if ( x != 0 && x != 9 ) {	// Левый и правый куб
-		if ( a_field[( int ) y][( int ) x - 1] != kTile_background ) {
+		if ( a_field[( int ) y][( int ) x - 1] != kTile_background ) {		// Слева
 			return 1;
 		}
-		if ( a_field[( int ) y][( int ) x + 1] != kTile_background ) {
+		if ( a_field[( int ) y][( int ) x + 1] != kTile_background ) {		// Справа
 			return 1;
 		}
 	}
 	if ( y != 0 && y != 9 ) {	// Верхний и нижний куб
-		if ( a_field[( int ) y - 1][( int ) x] != kTile_background ) {
+		if ( a_field[( int ) y - 1][( int ) x] != kTile_background ) {		// Снизу
 			return 1;
 		}
-		if ( a_field[( int ) y + 1][( int ) x] != kTile_background ) {
+		if ( a_field[( int ) y + 1][( int ) x] != kTile_background ) {		// Сверху
 			return 1;
 		}
 	}
@@ -264,7 +264,7 @@ char game_checkDotForSet( const char x, const char y ) {
 
 /*
  * Name: game_mainMenu
- * Description: Производится выбор пункта в главном меню, тип клиента записывается в передающуюся переменную, а игровой режим возвращается
+ * Description: Производится выбор пункта в главном меню, тип игрока записывается в передающуюся переменную, а следующий игровой режим возвращается
  * */
 char game_mainMenu( char* whoPlayer ) {
 	draw_menu();
@@ -297,20 +297,20 @@ char game_initGame( const char typeConnection ) {
 
 	if ( typeConnection == NET_SETUP ) {
 		srand( time( NULL ) );
-		first[0] = rand() % 2;
-		net_sendMessage( first, 1 );
-		net_recvMessage( first, 1 );
+		first[0] = rand() % 2;	// Определяем кто первый будет ходить
+		net_sendMessage( first, 1 );	// Сообщаем клиенту, о том кто первый ходит
+		net_recvMessage( first, 1 );	// Ждем обратного подтверждения
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
-		if ( first[0] == 0 ) {
+		if ( first[0] == 0 ) {	// Сообщаем о порядке хода
 			pid = draw_loadFullScreen( "Your step first" );
 		} else {
 			pid = draw_loadFullScreen( "Your step second" );
 		}
 	} else if ( typeConnection == NET_CLIENT ) {
-		net_recvMessage( first, 1 );
-		net_sendMessage( first, 1 );
+		net_recvMessage( first, 1 );	// Принимаем от сервера порядок хода
+		net_sendMessage( first, 1 );	// Делаем обратное подтверждение
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
-		if ( first[0] == 1 ) {
+		if ( first[0] == 1 ) {	// Сообщаем о порядке хода
 			pid = draw_loadFullScreen( "Your step first" );
 		} else {
 			pid = draw_loadFullScreen( "Your step second" );
@@ -318,10 +318,10 @@ char game_initGame( const char typeConnection ) {
 	} else {
 		draw_ERROR( "game_initGame", "Wrong variables typeConnection" );
 	}
-	sleep( 3 );
+	sleep( 2 );	// В течении нескольких секунд держим заставку о порядке хода
 	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 
-	return first[0];
+	return first[0];	// Возвращаем порядок хода
 }
 
 /*
@@ -335,8 +335,8 @@ void game_waitStep() {
 
 	net_recvMessage( shootCoord, 1 );	// Прием координаты выстрела противника
 	char answer[1];
-	answer[0] = game_checkShoot( shootCoord );
-	net_sendMessage( answer, 1 );
+	answer[0] = game_checkShoot( shootCoord );	// Проверяем выстрел
+	net_sendMessage( answer, 1 );	// Сообщаем противнику о результате выстрела
 
 	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 }
@@ -347,7 +347,7 @@ void game_waitStep() {
  * */
 char game_checkShoot( const char shootCoord[] ) {
 	int x = 0, y = 0;
-	for ( int i = 0, mn = 1; i < 4; i++, mn *= 2 ) {	// Вывод координат выстрела
+	for ( int i = 0, mn = 1; i < 4; i++, mn *= 2 ) {	// Вывод координат выстрела из одного байта
 		if ( shootCoord[0] & 1 << i ) {
 			y += mn;
 		}

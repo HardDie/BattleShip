@@ -74,7 +74,7 @@ void draw_cursorForShoot() {
  * */
 void draw_shipSetUp( const char width, const char pos ) {
 	wattron( winFstPlayer, COLOR_PAIR( 2 ) );	// Инверсия цвета для курсора
-	if ( pos == 0 ) {
+	if ( pos == 0 ) {	// Для горизонтального положения коробля
 		for ( char i = 0; i < width; i++ ) {
 			wmove( winFstPlayer, y_coor, ( x_coor + i ) * 2 );
 			if ( a_field[( int ) y_coor][( int ) x_coor + i] == kTile_ship ) {	// Если точка совпала уже с существующим кораблем выводит красным цветом
@@ -83,7 +83,7 @@ void draw_shipSetUp( const char width, const char pos ) {
 			waddch( winFstPlayer, kTile_ship );	// Отрисовка коробля
 			wattron( winFstPlayer, COLOR_PAIR( 2 ) );	// Возвращаем цвет
 		}
-	} else {
+	} else {	// Для вертикального
 		for ( char i = 0; i < width; i++ ) {
 			wmove( winFstPlayer, y_coor + i, x_coor * 2 );
 			if ( a_field[( int ) y_coor + i][( int ) x_coor] == kTile_ship ) {	// Если точка совпала уже с существующим кораблем выводит красным цветом
@@ -105,16 +105,16 @@ void draw_menu() {
 	clear();
 	int row, col;
 	getmaxyx( stdscr, row, col );
-	mvprintw( row * 0.05, col / 2 - 5, "Main menu!" );
-	mvprintw( row * 0.1, col * 0.05, "1. Server" );
-	mvprintw( row * 0.15, col * 0.05, "2. Client" );
-	mvprintw( row * 0.2, col * 0.05, "Q. Exit" );
+	mvprintw( 1, col / 2 - 5, "Main menu!" );
+	mvprintw( 2, 4, "1. Server" );
+	mvprintw( 3, 4, "2. Client" );
+	mvprintw( 4, 4, "Q. Exit" );
 	refresh();
 }
 
 /*
  * Name: draw_netServerPortEnter
- * Description: Выводит меню для сервера ввода порта
+ * Description: Выводит меню для сервера. Ввод порта
  * */
 void draw_netServerPortEnter() {
 	clear();
@@ -125,7 +125,7 @@ void draw_netServerPortEnter() {
 
 /*
  * Name: draw_netClientIPEnter
- * Decription: Выводит меня для ввода IP адреса для клиента
+ * Decription: Выводит меня для клиента. Ввода IP адреса
  */
 void  draw_netClientIPEnter() {
 	clear();
@@ -137,7 +137,7 @@ void  draw_netClientIPEnter() {
 
 /*
  * Name: draw_netClientPortEnter
- * Decription: Выводит меню для клиента ввода порта
+ * Decription: Выводит меню для клиента. Ввод порта
  */
 void  draw_netClientPortEnter( const char* ip ) {
 	clear();
@@ -150,7 +150,7 @@ void  draw_netClientPortEnter( const char* ip ) {
 
 /*
  * Name: draw_ERROR
- * Decription: Выводит ошибку программы
+ * Decription: Выводит ошибку программы, ожидает нажатия и аварийно завершает программу
  */
 void draw_ERROR( const char* funcName, const char* typeError ) {
 	clear();
