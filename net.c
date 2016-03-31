@@ -103,8 +103,6 @@ char net_checkIP() {
  * Desription: Происходит создание сокета
  * */
 void net_createSocket( const char typeConnection ) {
-	port = 1211;
-	strcpy( ip, "localhost" );
 	int pid = draw_loadFullScreen( "Create socket" );
 
 	server_addr.sin_family = AF_INET;		// Инициализация параметров
@@ -177,6 +175,7 @@ void net_connectOpponent( const char typeConnection ) {
 		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
 	} else {
 		draw_ERROR( "net_connectOpponent", "Wrong argument typeConnection" );
+
 	}
 }
 

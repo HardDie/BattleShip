@@ -201,7 +201,7 @@ void game_setUpShips() {
 				}
 				reDraw = 1;
 				shipNum++;	// Переходим к установке следующего коробля
-				if ( shipNum == 2 ) {
+				if ( shipNum == 11 ) {
 					isDone = 1;
 				}
 			}
