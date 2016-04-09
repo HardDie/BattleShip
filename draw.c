@@ -163,6 +163,7 @@ void draw_ERROR( const char* funcName, const char* typeError ) {
 	wattron( stdscr, COLOR_PAIR( 1 ) ); // Возвращаем цвета
 	refresh();
 	getch();  // Делаем задержку для прочтения ошибки
+	endwin();
 	exit( 1 );
 }
 
