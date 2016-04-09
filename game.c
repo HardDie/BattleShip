@@ -55,6 +55,9 @@ void game_doStep() {
 			}
 			break;
 		case 10:	// Enter
+			if ( b_field[ ( int )y_coor ][ ( int )x_coor ] != kTile_ship && b_field[ ( int )y_coor ][ ( int )x_coor ] != kTile_background ) {	// Если текущаю точка выстрела не равна кораблю или пустой точке, то продолжаем стрелять
+				continue;
+			}
 			isDone = 1;
 			char result[1];	// Переменная для возврата значения
 			result[0] = 0;
