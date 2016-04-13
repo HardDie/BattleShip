@@ -23,6 +23,8 @@ extern 			char				gameState;	// Состояние игры
 							GS_WAIT_ENEMY,
 							GS_WAIT_STEP,
 							GS_SHOOT,
+							GS_YOU_WIN,
+							GS_YOU_LOSE,
 							GS_END_GAME
 						};
 
@@ -40,5 +42,11 @@ extern 			char				gameState;	// Состояние игры
 				enum	{
 							FIRST_SERVER = 13,
 							FIRST_CLIENT = 14
+						};
+
+				enum	{
+							GAME_LOSE = 15,
+							GAME_WIN = 26,
+							GAME_NOTHING = 27
 						};
 #endif
