@@ -37,4 +37,8 @@ extern 			char				gameState;	// Состояние игры
 							SHOOT_KILL = 12
 						};
 
+				enum	{
+							FIRST_SERVER = 13,
+							FIRST_CLIENT = 14
+						};
 #endif
