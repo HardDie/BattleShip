@@ -204,7 +204,7 @@ void game_setUpShips() {
 				}
 				reDraw = 1;
 				shipNum++;	// Переходим к установке следующего коробля
-				if ( shipNum == 11 ) {
+				if ( shipNum == 2 ) {
 					isDone = 1;
 				}
 			}
@@ -292,14 +292,14 @@ char game_mainMenu( char* whoPlayer ) {
 		switch ( getch() ) {
 		case 49:	// 1
 			*whoPlayer = NET_SERVER;
-			return NET_SETUP;
+			return GS_NET_SETUP;
 			break;
 		case 50:	// 2
 			*whoPlayer = NET_CLIENT;
-			return NET_SETUP;
+			return GS_NET_SETUP;
 			break;
 		case 113:	// Q
-			return END_GAME;
+			return GS_END_GAME;
 			break;
 		}
 	}
@@ -314,7 +314,7 @@ char game_initGame( const char typeConnection ) {
 
 	char first[1];
 
-	if ( typeConnection == NET_SETUP ) {
+	if ( typeConnection == GS_NET_SETUP ) {
 		srand( time( NULL ) );
 		first[0] = rand() % 2;	// Определяем кто первый будет ходить
 		net_sendMessage( first, 1 );	// Сообщаем клиенту, о том кто первый ходит
