@@ -64,13 +64,23 @@ int main() {
 
 		} else if ( gameState == GS_SHOOT ) {
 
-			game_doStep();
-			changeGameState( GS_WAIT_STEP );
+			switch ( game_doStep() ) {
+				case SHOOT_BIT:
+					break;
+				case SHOOT_MISS:
+					changeGameState( GS_WAIT_STEP );
+					break;
+			}
 
 		} else if ( gameState == GS_WAIT_STEP ) {
 
-			game_waitStep();
-			changeGameState( GS_SHOOT );
+			switch ( game_waitStep() ) {
+				case SHOOT_BIT:
+					break;
+				case SHOOT_MISS:
+					changeGameState( GS_SHOOT );
+					break;
+			}
 
 		} else if ( gameState == GS_END_GAME ) {
 

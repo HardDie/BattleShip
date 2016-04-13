@@ -14,10 +14,11 @@ void game_initVariables() {
 
 /*
  * Name: game_doStep
- * Description: Выбор клетки для стрельбы и отрисовка курсора выбора хода, передается координата выстрела старшие 4 бита координата X младшие Y
+ * Description: Выбор клетки для стрельбы и отрисовка курсора выбора хода, передается координата выстрела старшие 4 бита координата X младшие Y, возвращает тип попадания
  * */
-void game_doStep() {
+char game_doStep() {
 	char isDone = 0, reDraw = 1;
+	char result[1];	// Переменная для возврата значения
 	while ( !isDone ) {
 		if ( reDraw ) {		// Отрисовка экрана
 			draw_battleField();
@@ -59,7 +60,6 @@ void game_doStep() {
 				continue;
 			}
 			isDone = 1;
-			char result[1];	// Переменная для возврата значения
 			result[0] = 0;
 			for ( char i = 0; i < 4; i++ ) {
 				if ( y_coor & 1 << i ) {	// В 4 младших бита записываем координату y
@@ -83,6 +83,7 @@ void game_doStep() {
 		}
 	}
 	draw_battleField();	// Отрисовываем игровые поля еще раз, чтобы при ожидании видеть, попал или нет выстрел
+	return result[0];
 }
 
 /*
@@ -349,9 +350,9 @@ char game_initGame( const char typeConnection ) {
 
 /*
  * Name: game_waitStep
- * Description: Ожидает хода противника и сообщает о промахе, попадании либо убийстве коробля
+ * Description: Ожидает хода противника и сообщает о промахе, попадании либо убийстве коробля, сообщает тип попадания
  * */
-void game_waitStep() {
+char game_waitStep() {
 	int pid = draw_loadText( "Wait while enemy shoot" );
 
 	char shootCoord[1];
@@ -362,6 +363,7 @@ void game_waitStep() {
 	net_sendMessage( answer, 1 );	// Сообщаем противнику о результате выстрела
 
 	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+	return answer[0];
 }
 
 /*

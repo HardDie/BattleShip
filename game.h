@@ -10,13 +10,13 @@
 #include "net.h"
 
 void	game_initVariables();
-void	game_doStep();
+char	game_doStep();
 void	game_setUpShips();
 char	game_checkShipForSet( const char width, const char pos );
 char	game_checkDotForSet( const char x, const char y );
 char	game_mainMenu( char* whoPlayer );
 char	game_initGame( const char typeConnection );
-void	game_waitStep();
+char	game_waitStep();
 char	game_checkShoot( const char shootCoord[] );
 
 #endif
