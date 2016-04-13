@@ -18,7 +18,7 @@ void game_initVariables() {
  * */
 char game_doStep() {
 	char isDone = 0, reDraw = 1;
-	char result[1];	// Переменная для возврата значения
+	char result;	// Переменная для возврата значения
 	while ( !isDone ) {
 		if ( reDraw ) {		// Отрисовка экрана
 			draw_battleField();
@@ -60,20 +60,20 @@ char game_doStep() {
 				continue;
 			}
 			isDone = 1;
-			result[0] = 0;
+			result = 0;
 			for ( char i = 0; i < 4; i++ ) {
 				if ( y_coor & 1 << i ) {	// В 4 младших бита записываем координату y
-					result[0] |= 1 << i;
+					result |= 1 << i;
 				}
 				if ( x_coor & 1 << i ) {	// В 4 старших бита записываем координату x
-					result[0] |= 1 << ( i + 4 );
+					result |= 1 << ( i + 4 );
 				}
 			}
-			net_sendMessage( result, 1 );	// Отправляем противнику координаы выстрела
-			net_recvMessage( result, 1 );	// Принимаем результат, попадание, промах или убийство корабля
-			if ( result[0] == SHOOT_BIT ) {
+			net_sendMessage( &result, 1 );	// Отправляем противнику координаы выстрела
+			net_recvMessage( &result, 1 );	// Принимаем результат, попадание, промах или убийство корабля
+			if ( result == SHOOT_BIT ) {
 				b_field[ ( int )y_coor ][ ( int )x_coor ] = kTile_bitShip;
-			} else if ( result[0] == SHOOT_MISS ) {
+			} else if ( result == SHOOT_MISS ) {
 				b_field[ ( int )y_coor ][ ( int )x_coor ] = kTile_miss;
 			} else {
 				draw_ERROR( "game_doStep", "Wrong argument b_field[y_coor][x_coor]" );
@@ -83,7 +83,7 @@ char game_doStep() {
 		}
 	}
 	draw_battleField();	// Отрисовываем игровые поля еще раз, чтобы при ожидании видеть, попал или нет выстрел
-	return result[0];
+	return result;
 }
 
 /*
@@ -313,39 +313,39 @@ char game_mainMenu( char* whoPlayer ) {
 char game_initGame( const char typeConnection ) {
 	draw_loadFullScreen( "Wait ready enemy" );
 
-	char first[1];
+	char first;
 
 	if ( typeConnection == NET_SERVER ) {
 		srand( time( NULL ) );
 		if ( rand() % 2 ) {		// Определяем кто первый будет ходить
-			first[0] = FIRST_SERVER;
+			first = FIRST_SERVER;
 		} else {
-			first[0] = FIRST_CLIENT;
+			first = FIRST_CLIENT;
 		}
-		net_sendMessage( first, 1 );	// Сообщаем клиенту, о том кто первый ходит
-		net_recvMessage( first, 1 );	// Ждем обратного подтверждения
+		net_sendMessage( &first, 1 );	// Сообщаем клиенту, о том кто первый ходит
+		net_recvMessage( &first, 1 );	// Ждем обратного подтверждения
 		draw_closeLoadScreen();		// Завершаем дочерний процесс отрисовки экрана загрузки
-		if ( first[0] == FIRST_SERVER ) {	// Сообщаем о порядке хода
+		if ( first == FIRST_SERVER ) {	// Сообщаем о порядке хода
 			draw_loadFullScreen( "Your step first" );
-			first[0] = 1;
-		} else if ( first[0] == FIRST_CLIENT ) {
+			first = 1;
+		} else if ( first == FIRST_CLIENT ) {
 			draw_loadFullScreen( "Your step second" );
-			first[0] = 2;
+			first = 2;
 		} else {
-			draw_ERROR( "game_initGame", "Wrong argument first[0]" );
+			draw_ERROR( "game_initGame", "Wrong argument first" );
 		}
 	} else if ( typeConnection == NET_CLIENT ) {
-		net_recvMessage( first, 1 );	// Принимаем от сервера порядок хода
-		net_sendMessage( first, 1 );	// Делаем обратное подтверждение
+		net_recvMessage( &first, 1 );	// Принимаем от сервера порядок хода
+		net_sendMessage( &first, 1 );	// Делаем обратное подтверждение
 		draw_closeLoadScreen();		// Завершаем дочерний процесс отрисовки экрана загрузки
-		if ( first[0] == FIRST_CLIENT ) {	// Сообщаем о порядке хода
+		if ( first == FIRST_CLIENT ) {	// Сообщаем о порядке хода
 			draw_loadFullScreen( "Your step first" );
-			first[0] = 1;
-		} else if ( first[0] == FIRST_SERVER ) {
+			first = 1;
+		} else if ( first == FIRST_SERVER ) {
 			draw_loadFullScreen( "Your step second" );
-			first[0] = 2;
+			first = 2;
 		} else {
-			draw_ERROR( "game_initGame", "Wrong argument first[0]" );
+			draw_ERROR( "game_initGame", "Wrong argument first" );
 		}
 	} else {
 		draw_ERROR( "game_initGame", "Wrong argument typeConnection" );
@@ -353,7 +353,7 @@ char game_initGame( const char typeConnection ) {
 	sleep( 2 );	// В течении нескольких секунд держим заставку о порядке хода
 	draw_closeLoadScreen();		// Завершаем дочерний процесс отрисовки экрана загрузки
 
-	return first[0];	// Возвращаем порядок хода
+	return first;	// Возвращаем порядок хода
 }
 
 /*
@@ -364,28 +364,28 @@ char game_waitStep() {
 	draw_battleField();
 	draw_loadText( "Wait while enemy shoot" );
 
-	char shootCoord[1];
+	char shootCoord;
 
-	net_recvMessage( shootCoord, 1 );	// Прием координаты выстрела противника
-	char answer[1];
-	answer[0] = game_checkShoot( shootCoord );	// Проверяем выстрел
-	net_sendMessage( answer, 1 );	// Сообщаем противнику о результате выстрела
+	net_recvMessage( &shootCoord, 1 );	// Прием координаты выстрела противника
+	char answer;
+	answer = game_checkShoot( shootCoord );	// Проверяем выстрел
+	net_sendMessage( &answer, 1 );	// Сообщаем противнику о результате выстрела
 
 	draw_closeLoadScreen();		// Завершаем дочерний процесс отрисовки экрана загрузки
-	return answer[0];
+	return answer;
 }
 
 /*
  * Name: game_checkShoot
  * Description: Проверяет выстрел оппонента, и возвращает промах, попал или убил
  * */
-char game_checkShoot( const char shootCoord[] ) {
+char game_checkShoot( const char shootCoord ) {
 	int x = 0, y = 0;
 	for ( int i = 0, mn = 1; i < 4; i++, mn *= 2 ) {	// Вывод координат выстрела из одного байта
-		if ( shootCoord[0] & 1 << i ) {
+		if ( shootCoord & 1 << i ) {
 			y += mn;
 		}
-		if ( shootCoord[0] & 1 << ( i + 4 ) ) {
+		if ( shootCoord & 1 << ( i + 4 ) ) {
 			x += mn;
 		}
 	}
