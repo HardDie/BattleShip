@@ -103,6 +103,8 @@ char net_checkIP() {
  * Desription: Происходит создание сокета
  * */
 void net_createSocket( const char typeConnection ) {
+	port=1111;
+	strcpy( ip, "localhost" );
 	int pid = draw_loadFullScreen( "Create socket" );
 
 	server_addr.sin_family = AF_INET;		// Инициализация параметров

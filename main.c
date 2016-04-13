@@ -21,7 +21,7 @@ int main() {
 	//============================
 	//	Setup
 	//============================
-	gameState = MENU;
+	gameState = GS_MENU;
 	game_initVariables();
 	setUpScreen();
 
@@ -29,50 +29,50 @@ int main() {
 	//	Game
 	//============================
 	while ( !gameIsDone ) {
-		if ( gameState == MENU ) {
+		if ( gameState == GS_MENU ) {
 
 			switch ( game_mainMenu( &whoPlayer ) ) {
-			case NET_SETUP:
-				changeGameState( NET_SETUP );
+			case GS_NET_SETUP:
+				changeGameState( GS_NET_SETUP );
 				break;
-			case END_GAME:
-				changeGameState( END_GAME );
+			case GS_END_GAME:
+				changeGameState( GS_END_GAME );
 				break;
 			}
 
-		} else if ( gameState == NET_SETUP ) {
+		} else if ( gameState == GS_NET_SETUP ) {
 
-			net_setup( whoPlayer );
+			//net_setup( whoPlayer );
 			net_createSocket( whoPlayer );
 			net_connectOpponent( whoPlayer );
-			changeGameState( SETUP_SHIP );
+			changeGameState( GS_SETUP_SHIP );
 
-		} else if ( gameState == SETUP_SHIP ) {
+		} else if ( gameState == GS_SETUP_SHIP ) {
 
 			draw_labels();
 			game_setUpShips();
-			changeGameState( WAIT_ENEMY );
+			changeGameState( GS_WAIT_ENEMY );
 
-		} else if ( gameState == WAIT_ENEMY ) {
+		} else if ( gameState == GS_WAIT_ENEMY ) {
 
 			whoFirst = game_initGame( whoPlayer );
 			if ( ( whoPlayer == NET_SERVER && whoFirst == 0 ) || ( whoPlayer == NET_CLIENT && whoFirst == 1 ) ) {	// Если 0 первым ходит сервер, при 1 первым ходит клиент
-				changeGameState( SHOOT );
+				changeGameState( GS_SHOOT );
 			} else {
-				changeGameState( WAIT_STEP );
+				changeGameState( GS_WAIT_STEP );
 			}
 
-		} else if ( gameState == SHOOT ) {
+		} else if ( gameState == GS_SHOOT ) {
 
 			game_doStep();
-			changeGameState( WAIT_STEP );
+			changeGameState( GS_WAIT_STEP );
 
-		} else if ( gameState == WAIT_STEP ) {
+		} else if ( gameState == GS_WAIT_STEP ) {
 
 			game_waitStep();
-			changeGameState( SHOOT );
+			changeGameState( GS_SHOOT );
 
-		} else if ( gameState == END_GAME ) {
+		} else if ( gameState == GS_END_GAME ) {
 
 			gameIsDone = 1;
 
@@ -134,19 +134,19 @@ void freeMemory() {
  * Description: Меняет состояние игры
  * */
 void changeGameState( const char newState ) {
-	if ( gameState == MENU ) {
+	if ( gameState == GS_MENU ) {
 		draw_help( "Leave MENU state!" );
-	} else if ( gameState == NET_SETUP ) {
+	} else if ( gameState == GS_NET_SETUP ) {
 		draw_help( "Leave NET_SETUP state!" );
-	} else if ( gameState == SETUP_SHIP ) {
+	} else if ( gameState == GS_SETUP_SHIP ) {
 		draw_help( "Leave SETUP_SHIP state!" );
-	} else if ( gameState == SHOOT ) {
+	} else if ( gameState == GS_SHOOT ) {
 		draw_help( "Leave SHOOT state!" );
-	} else if ( gameState == END_GAME ) {
+	} else if ( gameState == GS_END_GAME ) {
 		draw_help( "Leave END_GAME state!" );
-	} else if ( gameState == WAIT_ENEMY ) {
+	} else if ( gameState == GS_WAIT_ENEMY ) {
 		draw_help( "Leave WAIT_ENEMY state!" );
-	} else if ( gameState == WAIT_STEP ) {
+	} else if ( gameState == GS_WAIT_STEP ) {
 		draw_help( "Leave WAIT_STEP state!" );
 	} else {
 		draw_ERROR( "changeGameState", "Wrong argument gameState" );
@@ -158,19 +158,19 @@ void changeGameState( const char newState ) {
 
 	gameState = newState;
 
-	if ( gameState == MENU ) {
+	if ( gameState == GS_MENU ) {
 		draw_help( "Set MENU state!" );
-	} else if ( gameState == NET_SETUP ) {
+	} else if ( gameState == GS_NET_SETUP ) {
 		draw_help( "Set NET_SETUP state!" );
-	} else if ( gameState == SETUP_SHIP ) {
+	} else if ( gameState == GS_SETUP_SHIP ) {
 		draw_help( "Set SETUP_SHIP state!" );
-	} else if ( gameState == SHOOT ) {
+	} else if ( gameState == GS_SHOOT ) {
 		draw_help( "Set SHOOT state!" );
-	} else if ( gameState == END_GAME ) {
+	} else if ( gameState == GS_END_GAME ) {
 		draw_help( "Set END_GAME state!" );
-	} else if ( gameState == WAIT_ENEMY ) {
+	} else if ( gameState == GS_WAIT_ENEMY ) {
 		draw_help( "Set WAIT_ENEMY state!" );
-	} else if ( gameState == WAIT_STEP ) {
+	} else if ( gameState == GS_WAIT_STEP ) {
 		draw_help( "Set WAIT_STEP state!" );
 	} else {
 		draw_ERROR( "changeGameState", "Wrong argument gameState" );
