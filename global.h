@@ -26,15 +26,15 @@ extern 			char				gameState;	// Состояние игры
 							GS_END_GAME
 						};
 
-				enum	{
+				enum	{	// Тип клиента
 							NET_SERVER = 1,
 							NET_CLIENT
 						};
 
-				enum	{
-							SHOOT_MISS,
-							SHOOT_BIT,
-							SHOOT_KILL
+				enum	{	// Куда попал выстрел
+							SHOOT_MISS = 10,
+							SHOOT_BIT = 11,
+							SHOOT_KILL = 12
 						};
 
 #endif
