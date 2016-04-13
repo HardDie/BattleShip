@@ -186,3 +186,20 @@ void net_recvMessage( char* pointer, const size_t sizeMsg ) {
 			draw_ERROR( "net_recvMessage", "Enemy disconnect" );
 	}
 }
+
+/*
+ * Name: net_closeConnection
+ * Description: Закрывает сокеты
+ * */
+void net_closeConnection( const char typeConnection ) {
+
+	if ( typeConnection == NET_SERVER ) {
+		close( sock_enemy );
+		close( sock_server );
+	} else if ( typeConnection == NET_CLIENT ) {
+		close( sock_enemy );
+	} else {
+		draw_ERROR( "net_closeConnection", "Wrong argument typeConnection" );
+	}
+
+}
