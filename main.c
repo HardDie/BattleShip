@@ -56,10 +56,12 @@ int main() {
 		} else if ( gameState == GS_WAIT_ENEMY ) {
 
 			whoFirst = game_initGame( whoPlayer );
-			if ( ( whoPlayer == NET_SERVER && whoFirst == 0 ) || ( whoPlayer == NET_CLIENT && whoFirst == 1 ) ) {	// Если 0 первым ходит сервер, при 1 первым ходит клиент
+			if ( whoFirst == 1 ) {	// 1 ходит первым, 2 - вторым
 				changeGameState( GS_SHOOT );
-			} else {
+			} else if ( whoFirst == 2 ) {
 				changeGameState( GS_WAIT_STEP );
+			} else {
+				draw_ERROR( "main", "Wrong argument whoPlayer" );
 			}
 
 		} else if ( gameState == GS_SHOOT ) {
@@ -145,19 +147,19 @@ void freeMemory() {
  * */
 void changeGameState( const char newState ) {
 	if ( gameState == GS_MENU ) {
-		draw_help( "Leave MENU state!" );
+		draw_help( "Leave GS_MENU state!" );
 	} else if ( gameState == GS_NET_SETUP ) {
-		draw_help( "Leave NET_SETUP state!" );
+		draw_help( "Leave GS_NET_SETUP state!" );
 	} else if ( gameState == GS_SETUP_SHIP ) {
-		draw_help( "Leave SETUP_SHIP state!" );
+		draw_help( "Leave GS_SETUP_SHIP state!" );
 	} else if ( gameState == GS_SHOOT ) {
-		draw_help( "Leave SHOOT state!" );
+		draw_help( "Leave GS_SHOOT state!" );
 	} else if ( gameState == GS_END_GAME ) {
-		draw_help( "Leave END_GAME state!" );
+		draw_help( "Leave GS_END_GAME state!" );
 	} else if ( gameState == GS_WAIT_ENEMY ) {
-		draw_help( "Leave WAIT_ENEMY state!" );
+		draw_help( "Leave GS_WAIT_ENEMY state!" );
 	} else if ( gameState == GS_WAIT_STEP ) {
-		draw_help( "Leave WAIT_STEP state!" );
+		draw_help( "Leave GS_WAIT_STEP state!" );
 	} else {
 		draw_ERROR( "changeGameState", "Wrong argument gameState" );
 	}
@@ -169,19 +171,19 @@ void changeGameState( const char newState ) {
 	gameState = newState;
 
 	if ( gameState == GS_MENU ) {
-		draw_help( "Set MENU state!" );
+		draw_help( "Set GS_MENU state!" );
 	} else if ( gameState == GS_NET_SETUP ) {
-		draw_help( "Set NET_SETUP state!" );
+		draw_help( "Set GS_NET_SETUP state!" );
 	} else if ( gameState == GS_SETUP_SHIP ) {
-		draw_help( "Set SETUP_SHIP state!" );
+		draw_help( "Set GS_SETUP_SHIP state!" );
 	} else if ( gameState == GS_SHOOT ) {
-		draw_help( "Set SHOOT state!" );
+		draw_help( "Set GS_SHOOT state!" );
 	} else if ( gameState == GS_END_GAME ) {
-		draw_help( "Set END_GAME state!" );
+		draw_help( "Set GS_END_GAME state!" );
 	} else if ( gameState == GS_WAIT_ENEMY ) {
-		draw_help( "Set WAIT_ENEMY state!" );
+		draw_help( "Set GS_WAIT_ENEMY state!" );
 	} else if ( gameState == GS_WAIT_STEP ) {
-		draw_help( "Set WAIT_STEP state!" );
+		draw_help( "Set GS_WAIT_STEP state!" );
 	} else {
 		draw_ERROR( "changeGameState", "Wrong argument gameState" );
 	}

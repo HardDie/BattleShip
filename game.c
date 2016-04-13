@@ -315,16 +315,22 @@ char game_initGame( const char typeConnection ) {
 
 	char first[1];
 
-	if ( typeConnection == GS_NET_SETUP ) {
+	if ( typeConnection == NET_SERVER ) {
 		srand( time( NULL ) );
-		first[0] = rand() % 2;	// Определяем кто первый будет ходить
+		if ( rand() % 2 ) {		// Определяем кто первый будет ходить
+			first[0] = FIRST_SERVER;
+		} else {
+			first[0] = FIRST_CLIENT;
+		}
 		net_sendMessage( first, 1 );	// Сообщаем клиенту, о том кто первый ходит
 		net_recvMessage( first, 1 );	// Ждем обратного подтверждения
 		draw_closeLoadScreen();		// Завершаем дочерний процесс отрисовки экрана загрузки
-		if ( first[0] == 0 ) {	// Сообщаем о порядке хода
+		if ( first[0] == FIRST_SERVER ) {	// Сообщаем о порядке хода
 			draw_loadFullScreen( "Your step first" );
-		} else if ( first[0] == 1 ) {
+			first[0] = 1;
+		} else if ( first[0] == FIRST_CLIENT ) {
 			draw_loadFullScreen( "Your step second" );
+			first[0] = 2;
 		} else {
 			draw_ERROR( "game_initGame", "Wrong argument first[0]" );
 		}
@@ -332,10 +338,12 @@ char game_initGame( const char typeConnection ) {
 		net_recvMessage( first, 1 );	// Принимаем от сервера порядок хода
 		net_sendMessage( first, 1 );	// Делаем обратное подтверждение
 		draw_closeLoadScreen();		// Завершаем дочерний процесс отрисовки экрана загрузки
-		if ( first[0] == 1 ) {	// Сообщаем о порядке хода
+		if ( first[0] == FIRST_CLIENT ) {	// Сообщаем о порядке хода
 			draw_loadFullScreen( "Your step first" );
-		} else if ( first[0] == 0 ) {
+			first[0] = 1;
+		} else if ( first[0] == FIRST_SERVER ) {
 			draw_loadFullScreen( "Your step second" );
+			first[0] = 2;
 		} else {
 			draw_ERROR( "game_initGame", "Wrong argument first[0]" );
 		}
