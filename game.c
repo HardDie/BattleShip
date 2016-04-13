@@ -345,7 +345,7 @@ char game_initGame( const char typeConnection ) {
 			draw_loadFullScreen( "Your step second" );
 			first = 2;
 		} else {
-			draw_ERROR( "game_initGame", "Wrong argument first" );
+			draw_ERROR( "game_initGame", "Wrong recieved argument first" );
 		}
 	} else {
 		draw_ERROR( "game_initGame", "Wrong argument typeConnection" );
@@ -397,7 +397,71 @@ char game_checkShoot( const char shootCoord ) {
 		a_field[y][x] = kTile_bitShip;
 		return SHOOT_BIT;
 	} else {
-		draw_ERROR( "game_checkShoot", "Wrong argument a_field[y][x]" );
+		draw_ERROR( "game_checkShoot", "Wrong recieved argument a_field[y][x]" );
 	}
 	return SHOOT_MISS;
+}
+
+/*
+ * Name: game_checkWin
+ * Description: Проверяет условие выигрыша, возвращает статус победы
+ * */
+char game_checkWin( const char typeConnection ) {
+	char result = GAME_LOSE;
+
+	for ( int i = 0; i < 9; i++ ) {		// Проверяем поле на наличие хоть одного неубитого коробля
+		for ( int j = 0; j < 9; j++ ) {
+			if ( a_field[i][j] == kTile_ship ) {
+				result = GAME_NOTHING;
+				break;
+			}
+		}
+		if ( result == GAME_NOTHING ) {
+			break;
+		}
+	}
+
+	if ( typeConnection == NET_SERVER ) {
+
+		net_sendMessage( &result, 1 );
+		if ( result == GAME_LOSE ) {
+			return GAME_LOSE;
+		} else if ( result == GAME_NOTHING ) {
+			net_recvMessage( &result, 1 );
+			if ( result == GAME_LOSE ) {
+				return GAME_WIN;
+			} else if ( result == GAME_NOTHING ) {
+				return GAME_NOTHING;
+			} else {
+				draw_ERROR( "game_checkWin", "SERVER wrong recieved argument result" );
+			}
+		} else {
+			draw_ERROR( "game_checkWin", "SERVER wrong argument result" );
+		}
+
+
+	} else if ( typeConnection == NET_CLIENT ) {
+
+		char tmp = result;
+		net_recvMessage( &result, 1 );
+		if ( result == GAME_LOSE ) {
+			return GAME_WIN;
+		} else if ( result == GAME_NOTHING ) {
+			result = tmp;
+			net_sendMessage( &result, 1 );
+			if ( result == GAME_LOSE ) {
+				return GAME_LOSE;
+			} else if ( result == GAME_NOTHING ) {
+				return GAME_NOTHING;
+			} else {
+				draw_ERROR( "game_checkWin", "CLIENT wrong argument result" );
+			}
+		} else {
+			draw_ERROR( "game_checkWin", "CLIENT wrong recieved argument result" );
+		}
+
+	} else {
+		draw_ERROR( "game_checkWin", "Wrong argument typeConnection" );
+	}
+	return result;
 }

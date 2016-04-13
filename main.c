@@ -56,7 +56,7 @@ int main() {
 		} else if ( gameState == GS_WAIT_ENEMY ) {
 
 			whoFirst = game_initGame( whoPlayer );
-			if ( whoFirst == 1 ) {	// 1 ходит первым, 2 - вторым
+			if ( whoFirst == 1 ) {	// 1 - ходит первым, 2 - вторым
 				changeGameState( GS_SHOOT );
 			} else if ( whoFirst == 2 ) {
 				changeGameState( GS_WAIT_STEP );
@@ -74,6 +74,17 @@ int main() {
 					break;
 			}
 
+			switch( game_checkWin( whoPlayer ) ) {
+				case GAME_WIN:
+					changeGameState( GS_YOU_WIN );
+					break;
+				case GAME_LOSE:
+					changeGameState( GS_YOU_LOSE );
+					break;
+				case GAME_NOTHING:
+					break;
+			}
+
 		} else if ( gameState == GS_WAIT_STEP ) {
 
 			switch ( game_waitStep() ) {
@@ -84,8 +95,34 @@ int main() {
 					break;
 			}
 
+			switch( game_checkWin( whoPlayer ) ) {
+				case GAME_WIN:
+					changeGameState( GS_YOU_WIN );
+					break;
+				case GAME_LOSE:
+					changeGameState( GS_YOU_LOSE );
+					break;
+				case GAME_NOTHING:
+					break;
+			}
+
+		} else if ( gameState == GS_YOU_WIN ) {
+
+			draw_loadFullScreen( "You WIN!" );
+			getch();
+			draw_closeLoadScreen();
+			changeGameState( GS_END_GAME );
+
+		} else if ( gameState == GS_YOU_LOSE ) {
+
+			draw_loadFullScreen( "You LOSE!" );
+			getch();
+			draw_closeLoadScreen();
+			changeGameState( GS_END_GAME );
+
 		} else if ( gameState == GS_END_GAME ) {
 
+			net_closeConnection( whoPlayer );
 			gameIsDone = 1;
 
 		} else {
@@ -160,6 +197,10 @@ void changeGameState( const char newState ) {
 		draw_help( "Leave GS_WAIT_ENEMY state!" );
 	} else if ( gameState == GS_WAIT_STEP ) {
 		draw_help( "Leave GS_WAIT_STEP state!" );
+	} else if ( gameState == GS_YOU_WIN ) {
+		draw_help( "Leave GS_YOU_WIN state!" );
+	} else if ( gameState == GS_YOU_LOSE ) {
+		draw_help( "Leave GS_YOU_LOSE state!" );
 	} else {
 		draw_ERROR( "changeGameState", "Wrong argument gameState" );
 	}
@@ -184,6 +225,10 @@ void changeGameState( const char newState ) {
 		draw_help( "Set GS_WAIT_ENEMY state!" );
 	} else if ( gameState == GS_WAIT_STEP ) {
 		draw_help( "Set GS_WAIT_STEP state!" );
+	} else if ( gameState == GS_YOU_WIN ) {
+		draw_help( "Set GS_YOU_WIN state!" );
+	} else if ( gameState == GS_YOU_LOSE ) {
+		draw_help( "Set GS_YOU_LOSE state!" );
 	} else {
 		draw_ERROR( "changeGameState", "Wrong argument gameState" );
 	}
