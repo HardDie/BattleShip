@@ -1,5 +1,7 @@
 #include "draw.h"
 
+static int handleLoadScreen = -1;
+
 /*
  * Name: draw_labels
  * Description: Отрисовывает сетку поля
@@ -153,6 +155,9 @@ void  draw_netClientPortEnter( const char* ip ) {
  * Decription: Выводит ошибку программы, ожидает нажатия и аварийно завершает программу
  */
 void draw_ERROR( const char* funcName, const char* typeError ) {
+	if ( handleLoadScreen != -1 ) {
+		draw_closeLoadScreen();
+	}
 	clear();
 	wattron( stdscr, COLOR_PAIR( 3 ) ); // Делаем вывод ошибки красным цветом
 	int row, col;
@@ -181,11 +186,11 @@ void  draw_help( const char* helpText ) {
 
 /*
  * Name: draw_loadFullScreen
- * Description: Отрисовывает текст для загрузки очищая экран, возвращает pid дочернего процесса
+ * Description: Отрисовывает текст для загрузки очищая экран
  * */
-int draw_loadFullScreen( const char* loadText ) {
-	int pid = fork();
-	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
+void draw_loadFullScreen( const char* loadText ) {
+	handleLoadScreen = fork();
+	if ( handleLoadScreen == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
 		int row, col, dot;
 		getmaxyx( stdscr, row, col );
 		dot = 1;
@@ -202,16 +207,15 @@ int draw_loadFullScreen( const char* loadText ) {
 			sleep( 1 );
 		}
 	}
-	return pid;
 }
 
 /*
  * Name: draw_loadText
- * Description: Отрисовывает текст для загрузки не очищая экран, возвращает pid дочернего процесса
+ * Description: Отрисовывает текст для загрузки не очищая экран
  * */
-int draw_loadText( const char* loadText ) {
-	int pid = fork();
-	if ( pid == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
+void draw_loadText( const char* loadText ) {
+	handleLoadScreen = fork();
+	if ( handleLoadScreen == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
 		int row, col, dot;
 		getmaxyx( stdscr, row, col );
 		dot = 1;
@@ -232,5 +236,13 @@ int draw_loadText( const char* loadText ) {
 			sleep( 1 );
 		}
 	}
-	return pid;
+}
+
+/*
+ * Name: draw_closeLoadScreen
+ * Description: Закрывает процесс отрисовки окна
+ * */
+void draw_closeLoadScreen() {
+	kill( handleLoadScreen, SIGKILL );
+	handleLoadScreen = -1;
 }

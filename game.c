@@ -311,7 +311,7 @@ char game_mainMenu( char* whoPlayer ) {
  * Description: Сервер инициализирует кто будет первый ходить и ждет пока противника, а клиент просто ждет противника, результатом функция возвращает кто ходит первый
  * */
 char game_initGame( const char typeConnection ) {
-	int pid = draw_loadFullScreen( "Wait ready enemy" );
+	draw_loadFullScreen( "Wait ready enemy" );
 
 	char first[1];
 
@@ -320,22 +320,22 @@ char game_initGame( const char typeConnection ) {
 		first[0] = rand() % 2;	// Определяем кто первый будет ходить
 		net_sendMessage( first, 1 );	// Сообщаем клиенту, о том кто первый ходит
 		net_recvMessage( first, 1 );	// Ждем обратного подтверждения
-		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+		draw_closeLoadScreen();		// Завершаем дочерний процесс отрисовки экрана загрузки
 		if ( first[0] == 0 ) {	// Сообщаем о порядке хода
-			pid = draw_loadFullScreen( "Your step first" );
+			draw_loadFullScreen( "Your step first" );
 		} else if ( first[0] == 1 ) {
-			pid = draw_loadFullScreen( "Your step second" );
+			draw_loadFullScreen( "Your step second" );
 		} else {
 			draw_ERROR( "game_initGame", "Wrong argument first[0]" );
 		}
 	} else if ( typeConnection == NET_CLIENT ) {
 		net_recvMessage( first, 1 );	// Принимаем от сервера порядок хода
 		net_sendMessage( first, 1 );	// Делаем обратное подтверждение
-		kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+		draw_closeLoadScreen();		// Завершаем дочерний процесс отрисовки экрана загрузки
 		if ( first[0] == 1 ) {	// Сообщаем о порядке хода
-			pid = draw_loadFullScreen( "Your step first" );
+			draw_loadFullScreen( "Your step first" );
 		} else if ( first[0] == 0 ) {
-			pid = draw_loadFullScreen( "Your step second" );
+			draw_loadFullScreen( "Your step second" );
 		} else {
 			draw_ERROR( "game_initGame", "Wrong argument first[0]" );
 		}
@@ -343,7 +343,7 @@ char game_initGame( const char typeConnection ) {
 		draw_ERROR( "game_initGame", "Wrong argument typeConnection" );
 	}
 	sleep( 2 );	// В течении нескольких секунд держим заставку о порядке хода
-	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+	draw_closeLoadScreen();		// Завершаем дочерний процесс отрисовки экрана загрузки
 
 	return first[0];	// Возвращаем порядок хода
 }
@@ -353,7 +353,8 @@ char game_initGame( const char typeConnection ) {
  * Description: Ожидает хода противника и сообщает о промахе, попадании либо убийстве коробля, сообщает тип попадания
  * */
 char game_waitStep() {
-	int pid = draw_loadText( "Wait while enemy shoot" );
+	draw_battleField();
+	draw_loadText( "Wait while enemy shoot" );
 
 	char shootCoord[1];
 
@@ -362,7 +363,7 @@ char game_waitStep() {
 	answer[0] = game_checkShoot( shootCoord );	// Проверяем выстрел
 	net_sendMessage( answer, 1 );	// Сообщаем противнику о результате выстрела
 
-	kill( pid, SIGKILL );	// Завершаем дочерний процесс отрисовки экрана загрузки
+	draw_closeLoadScreen();		// Завершаем дочерний процесс отрисовки экрана загрузки
 	return answer[0];
 }
 

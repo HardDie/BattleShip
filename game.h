@@ -1,7 +1,6 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
-#define _POSIX_SOURCE
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>

@@ -1,6 +1,7 @@
 #ifndef _DRAW_H_
 #define _DRAW_H_
 
+#define _POSIX_SOURCE
 #include <ncurses.h>
 #include <string.h>
 #include <stdlib.h>
@@ -18,7 +19,8 @@ void	draw_netClientIPEnter();
 void	draw_netClientPortEnter( const char* ip );
 void	draw_ERROR( const char* funcName, const char* typeError );
 void	draw_help( const char* helpText );
-int		draw_loadFullScreen( const char* loadText );
-int		draw_loadText( const char* loadText );
+void	draw_loadFullScreen( const char* loadText );
+void	draw_loadText( const char* loadText );
+void	draw_closeLoadScreen();
 
 #endif
