@@ -39,12 +39,12 @@ extern 			char				gameState;	// Состояние игры
 							SHOOT_KILL = 12
 						};
 
-				enum	{
+				enum	{	// Определения первого хода
 							FIRST_SERVER = 13,
 							FIRST_CLIENT = 14
 						};
 
-				enum	{
+				enum	{	// Определения состояния победы, выигрыша или продолжения игры
 							GAME_LOSE = 15,
 							GAME_WIN = 26,
 							GAME_NOTHING = 27
