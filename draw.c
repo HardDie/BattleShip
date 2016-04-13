@@ -189,6 +189,9 @@ void  draw_help( const char* helpText ) {
  * Description: Отрисовывает текст для загрузки очищая экран
  * */
 void draw_loadFullScreen( const char* loadText ) {
+	if ( handleLoadScreen != -1 ) {
+		draw_ERROR( "draw_loadFullScreen", "Loadscreen already initilized" );
+	}
 	handleLoadScreen = fork();
 	if ( handleLoadScreen == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
 		int row, col, dot;
@@ -214,6 +217,9 @@ void draw_loadFullScreen( const char* loadText ) {
  * Description: Отрисовывает текст для загрузки не очищая экран
  * */
 void draw_loadText( const char* loadText ) {
+	if ( handleLoadScreen != -1 ) {
+		draw_ERROR( "draw_loadText", "Loadscreen already initilized" );
+	}
 	handleLoadScreen = fork();
 	if ( handleLoadScreen == 0 ) {	// Создаем дочерний процесс отрисовки экрана загрузки
 		int row, col, dot;
