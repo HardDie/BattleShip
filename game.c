@@ -205,7 +205,7 @@ void game_setUpShips() {
 				}
 				reDraw = 1;
 				shipNum++;	// Переходим к установке следующего коробля
-				if ( shipNum == 2 ) {
+				if ( shipNum == 11 ) {
 					isDone = 1;
 				}
 			}
@@ -300,6 +300,7 @@ char game_mainMenu( char* whoPlayer ) {
 			return GS_NET_SETUP;
 			break;
 		case 113:	// Q
+			*whoPlayer = NET_CLIENT;
 			return GS_END_GAME;
 			break;
 		}

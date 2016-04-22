@@ -42,7 +42,7 @@ int main() {
 
 		} else if ( gameState == GS_NET_SETUP ) {
 
-			//net_setup( whoPlayer );
+			net_setup( whoPlayer );
 			net_createSocket( whoPlayer );
 			net_connectOpponent( whoPlayer );
 			changeGameState( GS_SETUP_SHIP );
