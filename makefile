@@ -7,11 +7,15 @@ obj = 			\
 		$(path)/global.o	\
 		$(path)/draw.o	\
 		$(path)/net.o
-all : $(path)/BattleShip
+all : check_path $(path)/BattleShip
 
 $(path)/BattleShip : $(obj)
 	$(comp) $(obj) -o $(path)/BattleShip $(lib)
 $(path)/%.o : %.c
 	$(comp) -c $< -o $@
+
 clean :
 	rm -rf $(path)/*
+
+check_path :
+	@ if [ ! -d $(path) ]; then mkdir $(path); fi
