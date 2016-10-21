@@ -14,13 +14,13 @@ void net_setup( const char typeConnection ) {
 
 	if ( typeConnection == NET_CLIENT ) {           // Настройка клиента
 		draw_netClientIPEnter();
-		draw_help( "Enter server IP addres(255.255.255.255)" );
+		draw_help( "Enter server IP address(255.255.255.255)" );
 
 		WINDOW *input = NULL; // Создаем окно для ввода
 		input = subwin( stdscr, 1, 16, 1, 1 );  // Инициализируем его
 		while ( wgetstr( input, ip ) || net_checkIP() ) {	// Проверяем IP на правильность ввода
 			draw_netClientIPEnter();
-			draw_help( "Wrong input, try again. Enter server IP addres(255.255.255.255)" );
+			draw_help( "Wrong input, try again. Enter server IP address(255.255.255.255)" );
 		}
 		delwin( input );
 
