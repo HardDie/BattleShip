@@ -107,8 +107,8 @@ void draw_shipSetUp( const char width, const char pos ) {
  * */
 void draw_menu() {
 	clear();
-	int row, col;
-	getmaxyx( stdscr, row, col );
+	int col;
+    col = getmaxx( stdscr );
 	mvprintw( 1, col / 2 - 5, "Main menu!" );
 	mvprintw( 2, 4, "1. Server" );
 	mvprintw( 3, 4, "2. Client" );

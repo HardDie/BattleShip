@@ -159,7 +159,7 @@ void net_connectOpponent( const char typeConnection ) {
 		struct sockaddr_in 	client_addr;
 		int 				sin_size;
 		sin_size = sizeof( struct sockaddr_in );
-		sock_enemy = accept( sock_server, ( struct sockaddr * )&client_addr, &sin_size );
+		sock_enemy = accept( sock_server, ( struct sockaddr* )&client_addr, ( socklen_t* )&sin_size );
 	} else if ( typeConnection == NET_CLIENT ) {
 		if ( connect( sock_enemy, ( struct sockaddr * )&server_addr, sizeof( struct sockaddr ) ) == -1 ) {
 			draw_ERROR( "net_connectOpponent", "Connect to server" );
