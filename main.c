@@ -154,7 +154,7 @@ int setUpScreen() {
 	init_pair( 1, COLOR_WHITE, COLOR_BLUE );	// Создаем пару СИМВОЛ и ФОН для обычных символов
 	init_pair( 2, COLOR_BLUE, COLOR_WHITE );	// Пара для текущего положения курсора
 	init_pair( 3, COLOR_RED, COLOR_WHITE );		// Пара для совпадения детали текущего и уже существующего корабля
-	init_pair( 4, COLOR_BLUE, COLOR_BLACK );	// Пара для текста подсказки
+	init_pair( 4, COLOR_WHITE, COLOR_BLACK );	// Пара для текста подсказки
 
 	bkgdset( COLOR_PAIR( 1 ) );	// Устанавливаем пару как стандартную
 	wbkgdset( winFstPlayer, COLOR_PAIR( 1 ) );	// Ставим пару цветов для окна первого ирока
