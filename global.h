@@ -1,8 +1,6 @@
 #ifndef _GLOBAL_H_
 #define _GLOBAL_H_
 
-#include <ncurses.h>
-
 extern const 	char 				kSPACE_BETWEEN;	// Расстояние между полями
 extern const 	char 				kTile_background;
 extern const 	char 				kTile_ship;

@@ -1,3 +1,5 @@
+#include <ncurses.h>
+
 #include "global.h"
 
 const 	char 			kSPACE_BETWEEN = ( 8 * 3 );	// Расстояние между окнами полей

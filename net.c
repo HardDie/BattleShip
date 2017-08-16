@@ -1,3 +1,13 @@
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <strings.h>
+#include <string.h>
+#include <netdb.h>
+#include <ncurses.h>
+#include "draw.h"
+#include "global.h"
+
 #include "net.h"
 
 unsigned short    	port;

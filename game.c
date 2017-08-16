@@ -1,3 +1,11 @@
+#include <ncurses.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+#include "global.h"
+#include "draw.h"
+#include "net.h"
+
 #include "game.h"
 
 /*

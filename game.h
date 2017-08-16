@@ -1,13 +1,6 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
-#include <ncurses.h>
-#include <stdlib.h>
-#include <time.h>
-#include "global.h"
-#include "draw.h"
-#include "net.h"
-
 void	game_initVariables();
 char	game_doStep();
 void	game_setUpShips();

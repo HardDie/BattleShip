@@ -1,14 +1,6 @@
 #ifndef _DRAW_H_
 #define _DRAW_H_
 
-#define _POSIX_SOURCE
-#include <ncurses.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include "global.h"
-
 void	draw_labels();
 void 	draw_battleField();
 void	draw_cursorForShoot();
