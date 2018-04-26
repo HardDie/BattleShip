@@ -5,7 +5,7 @@ ifndef V
 endif
 
 CC = cc
-CFLAGS = -std=c99
+CFLAGS = -std=c99 -Wall -Wextra -Werror
 RM = rm -f
 
 lib = -lncurses

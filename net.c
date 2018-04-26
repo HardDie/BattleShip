@@ -69,7 +69,7 @@ char net_checkIP() {
 	}
 
 	char dotCount = 0;
-	for ( int i = 0; i < strlen( ip ); i++ ) {
+	for ( unsigned int i = 0; i < strlen( ip ); i++ ) {
 		if ( ip[i] == '.' ) { 	// Проверка но количество точек
 			dotCount++;
 			continue;
@@ -96,7 +96,7 @@ char net_checkIP() {
 			mn *= 10;
 		}
 
-		if ( !(( i == 0 ) || ( i == strlen( ip ) - 1 )) ) {  // Не учитываем в проверке первый и последний символ
+		if ( !(( i == 0 ) || ( i == ( int )strlen( ip ) - 1 )) ) {  // Не учитываем в проверке первый и последний символ
 			if ( ip[i] == '0' && ip[i - 1] == '.' && ip[i + 1] != '.' ) { // Если 0 в значении стоит первым, и после него нету точки, то это неверно
 				return 1;
 			}
