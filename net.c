@@ -36,14 +36,14 @@ void net_setup( const char typeConnection ) {
 
 		draw_netClientPortEnter( ip );
 		draw_help( "Input port(1025-10000)" );
-		while ( ( !scanw( "%d", &port ) ) || port < 1025 || port > 10000 ) {   // Считываем порт
+		while ( ( !scanw( "%hd", &port ) ) || port < 1025 || port > 10000 ) {   // Считываем порт
 			draw_netClientPortEnter( ip );
 			draw_help( "Wrong input, try again. Input port(1025-10000)" );
 		}
 	} else if ( typeConnection == NET_SERVER ) {      // Настройка сервера
 		draw_netServerPortEnter();
 		draw_help( "Input port(1025-10000)" );
-		while ( ( !scanw( "%d", &port ) ) || port < 1025 || port > 10000 ) {   // Считываем порт
+		while ( ( !scanw( "%hd", &port ) ) || port < 1025 || port > 10000 ) {   // Считываем порт
 			draw_netServerPortEnter();
 			draw_help( "Wrong input, try again. Input port(1025-10000)" );
 		}
